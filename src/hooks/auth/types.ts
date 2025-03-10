@@ -93,7 +93,7 @@ export interface AccountResetRequest {
   email: string;
   message: string;
   timestamp: string;
-  type: 'account_reset';
+  type: 'account_reset' | 'password_reset';
   status: 'pending' | 'approved' | 'rejected';
   resolvedAt?: string;
   resolvedBy?: string;

@@ -1,16 +1,12 @@
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { Label } from "@/components/ui/label";
+import { useLoginForm } from "@/hooks/useLoginForm";
 import PasswordInput from "./PasswordInput";
 import TwoFactorForm from "./TwoFactorForm";
-import { useLoginForm } from "@/hooks/useLoginForm";
-import { Separator } from "@/components/ui/separator";
 
 interface LoginFormProps {
   securityInfo: { locked: boolean; remainingMinutes: number } | null;
@@ -19,33 +15,34 @@ interface LoginFormProps {
   onLoginError: (error: Error) => void;
 }
 
-const LoginForm: React.FC<LoginFormProps> = ({
-  securityInfo,
+const LoginForm = ({ 
+  securityInfo, 
   onSetShowContactAdminDialog,
   onEmailChange,
-  onLoginError,
-}) => {
-  const { login } = useAuth();
+  onLoginError
+}: LoginFormProps) => {
   const {
     formData,
     twoFactorCode,
     showTwoFactorInput,
-    handleEmailChange,
+    handleEmailChange: handleFormEmailChange,
     handlePasswordChange,
     handleTwoFactorCodeChange,
     handleBackToLogin,
-    handleSubmit,
+    handleSubmit: submitForm
   } = useLoginForm();
-  const [rememberMe, setRememberMe] = useState(false);
 
-  const combinedEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleEmailChange(e);
+  // Wrap the email change handler to notify parent component
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFormEmailChange(e);
     onEmailChange(e);
   };
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  // Extend the submit handler to catch errors
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      await handleSubmit(e);
+      await submitForm(e);
     } catch (error) {
       if (error instanceof Error) {
         onLoginError(error);
@@ -53,106 +50,70 @@ const LoginForm: React.FC<LoginFormProps> = ({
     }
   };
 
+  // Si l'utilisateur doit entrer un code 2FA
   if (showTwoFactorInput) {
     return (
       <TwoFactorForm
-        value={twoFactorCode}
-        onChange={handleTwoFactorCodeChange}
-        onSubmit={handleLoginSubmit}
+        twoFactorCode={twoFactorCode}
+        onTwoFactorCodeChange={handleTwoFactorCodeChange}
+        onSubmit={handleSubmit}
         onBack={handleBackToLogin}
-        isPending={login.isPending}
       />
     );
   }
 
   return (
-    <form onSubmit={handleLoginSubmit} className="mt-8 space-y-6">
-      <div className="rounded-md space-y-4">
-        <div>
-          <label htmlFor="email" className="sr-only">
-            Adresse email
-          </label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-            placeholder="Adresse email"
-            value={formData.email}
-            onChange={combinedEmailChange}
-            disabled={securityInfo?.locked}
-          />
-        </div>
-        <div>
-          <PasswordInput
-            id="password"
-            name="password"
-            autoComplete="current-password"
-            required
-            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-            placeholder="Mot de passe"
-            value={formData.password}
-            onChange={handlePasswordChange}
-            disabled={securityInfo?.locked}
-          />
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div>
+        <Label htmlFor="email">Adresse e-mail</Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="exemple@email.com"
+          value={formData.email}
+          onChange={handleEmailChange}
+          className="mt-1"
+          autoComplete="email"
+          disabled={securityInfo?.locked}
+        />
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
-          <Checkbox
-            id="remember-me"
-            checked={rememberMe}
-            onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-            disabled={securityInfo?.locked}
-          />
-          <label
-            htmlFor="remember-me"
-            className="ml-2 block text-sm text-gray-900"
-          >
-            Se souvenir de moi
-          </label>
-        </div>
-
-        <div className="text-sm">
-          <Link
-            to="/forgot-password"
-            className="font-medium text-blue-600 hover:text-blue-500"
-          >
-            Mot de passe oublié?
+      <div>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password">Mot de passe</Label>
+          <Link to="/mot-de-passe-oublie" className="text-sm text-primary hover:underline">
+            Mot de passe oublié ?
           </Link>
         </div>
+        <PasswordInput
+          id="password"
+          value={formData.password}
+          onChange={handlePasswordChange}
+          disabled={securityInfo?.locked}
+        />
       </div>
 
-      {securityInfo?.locked ? (
-        <Button
-          type="button"
+      <div>
+        <Button 
+          type="submit" 
           className="w-full"
-          onClick={() => onSetShowContactAdminDialog(true)}
+          disabled={securityInfo?.locked}
         >
-          Contacter l'administrateur
+          Se connecter
         </Button>
-      ) : (
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={login.isPending}
-        >
-          {login.isPending ? "Connexion en cours..." : "Se connecter"}
-        </Button>
+      </div>
+      
+      {securityInfo?.locked && (
+        <div className="text-center mt-2">
+          <Button 
+            variant="link" 
+            onClick={() => onSetShowContactAdminDialog(true)}
+            className="text-sm"
+          >
+            Contacter l'administrateur
+          </Button>
+        </div>
       )}
-
-      <div className="mt-4 text-center">
-        <span className="text-sm text-gray-600">Pas encore de compte? </span>
-        <Link
-          to="/register"
-          className="text-sm font-medium text-blue-600 hover:text-blue-500"
-        >
-          Inscrivez-vous
-        </Link>
-      </div>
     </form>
   );
 };

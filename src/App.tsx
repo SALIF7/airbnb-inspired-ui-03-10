@@ -14,6 +14,7 @@ import Index from './pages/Index';
 import ListingDetail from './pages/ListingDetail';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
 import NotFound from './pages/NotFound';
 import Jobs from './pages/Jobs';
 import JobDetail from './pages/JobDetail';
@@ -62,6 +63,7 @@ function App() {
           <Route path="/logement/:id" element={<ListingDetail />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
           <Route path="/emplois" element={<Jobs />} />
           <Route path="/emploi/:id" element={<JobDetail />} />
           <Route path="/about" element={<AboutUs />} />
