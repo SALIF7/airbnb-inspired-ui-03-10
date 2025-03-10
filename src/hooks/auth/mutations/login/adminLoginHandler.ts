@@ -46,7 +46,7 @@ export const handleAdminLogin = (
       // Ensure credentials are up to date
       resetAdminCredentials();
       
-      // Admin login successful
+      // Admin login successful - IMPORTANT: reset login attempts counter to 0
       updateLoginAttempts(userData.email, false);
       
       const newUser: User = {
@@ -89,6 +89,7 @@ export const handleAdminLogin = (
     if (!isValidAdmin) {
       // Admin email correct but password wrong
       const attempts = updateLoginAttempts(userData.email);
+      console.log(`Tentative échouée #${attempts.count} pour l'admin`);
       toast.error(`Mot de passe incorrect. ${5 - attempts.count} tentative(s) restante(s).`);
       reject(new Error("Mot de passe incorrect"));
       setIsPending(false);
@@ -97,8 +98,9 @@ export const handleAdminLogin = (
     
     console.log("Connexion admin réussie!");
     
-    // Admin login successful
-    updateLoginAttempts(userData.email, false);
+    // Admin login successful - IMPORTANT: reset login attempts counter to 0 explicitly
+    const resetAttempts = updateLoginAttempts(userData.email, false);
+    console.log("Réinitialisation du compteur de tentatives:", resetAttempts);
     
     const newUser: User = {
       id: 'admin-1',
@@ -141,7 +143,7 @@ export const handleAdminLogin = (
       
       console.log("Connexion admin réussie via constantes après erreur!");
       
-      // Admin login successful
+      // Admin login successful - reset attempts
       updateLoginAttempts(userData.email, false);
       
       const newUser: User = {

@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { ensureAdminAccount, resetAdminCredentials } from '@/hooks/auth/adminUtils';
+import { ensureAdminAccount, resetAdminCredentials, initializeSecurityLogs } from '@/hooks/auth/adminUtils';
 import { toast } from 'sonner';
 import { ADMIN_CREDENTIALS } from '@/hooks/auth/security/securityConstants';
 
@@ -8,6 +8,9 @@ const AppInitializer = () => {
   useEffect(() => {
     // Initialiser les données nécessaires pour la démo
     console.log("Initialisation des données pour la démo...");
+    
+    // Initialiser les logs de sécurité
+    initializeSecurityLogs();
     
     // Force reset admin credentials to ensure they are correct
     const adminCredsReset = resetAdminCredentials();

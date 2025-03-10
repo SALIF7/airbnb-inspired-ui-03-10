@@ -24,6 +24,7 @@ export const handleUserLogin = (
   if (!foundUser) {
     // User not found
     const attempts = updateLoginAttempts(userData.email);
+    console.log(`Tentative échouée #${attempts.count} pour l'utilisateur ${userData.email} - utilisateur non trouvé`);
     
     if (attempts.count >= 5) {
       toast.error(`Trop de tentatives échouées. Compte verrouillé pour 1 heure.`);
@@ -49,10 +50,13 @@ export const handleUserLogin = (
   }
   
   // Basic password validation for regular users
-  const isValidPassword = userData.password && userData.password.length >= 6;
+  // Dans un cas réel, vous feriez une comparaison de hash, mais ici nous simplifions
+  const isValidPassword = (foundUser.password === userData.password) || 
+                         (userData.password && userData.password.length >= 6);
   
   if (!isValidPassword) {
     const attempts = updateLoginAttempts(userData.email);
+    console.log(`Tentative échouée #${attempts.count} pour l'utilisateur ${userData.email} - mot de passe incorrect`);
     
     if (attempts.count >= 5) {
       toast.error(`Trop de tentatives échouées. Compte verrouillé pour 1 heure.`);
@@ -77,8 +81,9 @@ export const handleUserLogin = (
     return;
   }
   
-  // On success, reset the attempt counter
-  updateLoginAttempts(userData.email, false);
+  // On success, reset the attempt counter - IMPORTANT: set to false to reset counter
+  const resetAttempts = updateLoginAttempts(userData.email, false);
+  console.log("Connexion réussie, réinitialisation des tentatives:", resetAttempts);
   
   const newUser: User = {
     ...foundUser,
