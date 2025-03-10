@@ -28,10 +28,11 @@ export const handleAdminLogin = (
     // Check if this is the admin trying to log in
     if (userData.email.toLowerCase() === adminData.email.toLowerCase()) {
       console.log("Tentative de connexion admin détectée avec:", {
-        email: userData.email
+        email: userData.email,
+        password: userData.password.substring(0, 3) + "..." // Logging partially for security
       });
       
-      // Utiliser la fonction de vérification des identifiants admin
+      // Use admin credentials verification function
       const isValidAdmin = verifyAdminCredentials(userData.email, userData.password);
       
       if (!isValidAdmin) {

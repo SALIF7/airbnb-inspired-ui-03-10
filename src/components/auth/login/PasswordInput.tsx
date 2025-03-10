@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff } from "lucide-react";
 
-interface PasswordInputProps {
+export interface PasswordInputProps {
   id?: string;
   name?: string;
   value: string;
@@ -13,10 +13,11 @@ interface PasswordInputProps {
   autoComplete?: string;
   required?: boolean;
   placeholder?: string;
+  className?: string;
 }
 
 const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ id, name, value, onChange, disabled, autoComplete, required, placeholder }, ref) => {
+  ({ id, name, value, onChange, disabled, autoComplete, required, placeholder, className }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -34,7 +35,7 @@ const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             ref={ref}
             autoComplete={autoComplete || "current-password"}
             required={required}
-            className="appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            className={className || "appearance-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"}
             placeholder={placeholder || "Mot de passe"}
             value={value}
             onChange={onChange}

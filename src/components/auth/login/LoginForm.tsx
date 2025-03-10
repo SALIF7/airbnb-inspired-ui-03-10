@@ -58,10 +58,11 @@ const LoginForm: React.FC<LoginFormProps> = ({
   if (showTwoFactorInput) {
     return (
       <TwoFactorForm
-        twoFactorCode={twoFactorCode}
-        onCodeChange={handleTwoFactorCodeChange}
+        value={twoFactorCode}
+        onChange={handleTwoFactorCodeChange}
         onSubmit={handleLoginSubmit}
         onBack={handleBackToLogin}
+        isPending={login.isPending}
       />
     );
   }
@@ -111,9 +112,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
           />
         </div>
         <div>
-          <label htmlFor="password" className="sr-only">
-            Mot de passe
-          </label>
           <PasswordInput
             id="password"
             name="password"

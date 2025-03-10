@@ -1,15 +1,16 @@
 
+import React, { FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface TwoFactorFormProps {
+export interface TwoFactorFormProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (e?: React.FormEvent) => void;
   onBack: () => void;
-  isPending: boolean;
+  isPending?: boolean;
 }
 
 const TwoFactorForm: React.FC<TwoFactorFormProps> = ({
@@ -17,7 +18,7 @@ const TwoFactorForm: React.FC<TwoFactorFormProps> = ({
   onChange,
   onSubmit,
   onBack,
-  isPending
+  isPending = false
 }) => {
   const handleSubmitClick = () => {
     onSubmit();
