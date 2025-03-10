@@ -47,7 +47,13 @@ export const handleAdminLogin = (
       resetAdminCredentials();
       
       // Admin login successful - IMPORTANT: reset login attempts counter to 0
-      updateLoginAttempts(userData.email, false);
+      // Reset login attempts using localStorage directly to ensure it works
+      localStorage.setItem(`login_attempts_${userData.email}`, JSON.stringify({
+        count: 0,
+        timestamp: Date.now(),
+        lockUntil: undefined
+      }));
+      console.log("Tentatives de connexion admin réinitialisées complètement");
       
       const newUser: User = {
         id: 'admin-1',
@@ -90,7 +96,13 @@ export const handleAdminLogin = (
       // Admin email correct but password wrong
       const attempts = updateLoginAttempts(userData.email);
       console.log(`Tentative échouée #${attempts.count} pour l'admin`);
-      toast.error(`Mot de passe incorrect. ${5 - attempts.count} tentative(s) restante(s).`);
+      
+      if (attempts.count >= 5) {
+        toast.error("Trop de tentatives de connexion échouées. Compte verrouillé temporairement.");
+      } else {
+        toast.error(`Mot de passe incorrect. ${5 - attempts.count} tentative(s) restante(s).`);
+      }
+      
       reject(new Error("Mot de passe incorrect"));
       setIsPending(false);
       return true;
@@ -99,8 +111,13 @@ export const handleAdminLogin = (
     console.log("Connexion admin réussie!");
     
     // Admin login successful - IMPORTANT: reset login attempts counter to 0 explicitly
-    const resetAttempts = updateLoginAttempts(userData.email, false);
-    console.log("Réinitialisation du compteur de tentatives:", resetAttempts);
+    // Reset login attempts using localStorage directly to ensure it works
+    localStorage.setItem(`login_attempts_${userData.email}`, JSON.stringify({
+      count: 0,
+      timestamp: Date.now(),
+      lockUntil: undefined
+    }));
+    console.log("Tentatives de connexion admin réinitialisées complètement");
     
     const newUser: User = {
       id: 'admin-1',
@@ -144,7 +161,13 @@ export const handleAdminLogin = (
       console.log("Connexion admin réussie via constantes après erreur!");
       
       // Admin login successful - reset attempts
-      updateLoginAttempts(userData.email, false);
+      // Reset login attempts using localStorage directly to ensure it works
+      localStorage.setItem(`login_attempts_${userData.email}`, JSON.stringify({
+        count: 0,
+        timestamp: Date.now(),
+        lockUntil: undefined
+      }));
+      console.log("Tentatives de connexion admin réinitialisées complètement");
       
       const newUser: User = {
         id: 'admin-1',

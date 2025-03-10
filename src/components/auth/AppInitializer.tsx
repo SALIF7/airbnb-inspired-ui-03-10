@@ -44,6 +44,18 @@ const AppInitializer = () => {
       resetAdminCredentials();
     }
     
+    // Reset admin login attempts to make sure admin can login
+    try {
+      localStorage.setItem(`login_attempts_${ADMIN_CREDENTIALS.EMAIL}`, JSON.stringify({
+        count: 0,
+        timestamp: Date.now(),
+        lockUntil: undefined
+      }));
+      console.log("Tentatives de connexion admin réinitialisées");
+    } catch (e) {
+      console.error("Erreur lors de la réinitialisation des tentatives de connexion admin:", e);
+    }
+    
     // Initialiser d'autres données si nécessaire
     if (!localStorage.getItem('all_users')) {
       localStorage.setItem('all_users', JSON.stringify([]));

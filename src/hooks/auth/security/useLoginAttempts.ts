@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { MAX_LOGIN_ATTEMPTS, LOCKOUT_DURATION } from "./securityConstants";
 
@@ -46,17 +47,18 @@ export const useLoginAttempts = () => {
     return newData;
   };
 
-  // Reset login attempts to zero
+  // Reset login attempts to zero and clear any lock
   const resetLoginAttempts = (email: string) => {
     if (!email) return;
     
     const newData = { 
       count: 0, 
-      timestamp: Date.now() 
+      timestamp: Date.now(),
+      lockUntil: undefined  // Explicitly remove any lock
     };
     
     localStorage.setItem(`login_attempts_${email}`, JSON.stringify(newData));
-    console.log(`Réinitialisation complète des tentatives pour ${email}`);
+    console.log(`Réinitialisation complète des tentatives pour ${email}`, newData);
     return newData;
   };
 
