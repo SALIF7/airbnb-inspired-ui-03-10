@@ -3,7 +3,7 @@ import { User } from "../../types";
 import { toast } from "sonner";
 import { LocalStorageKeys } from "../../constants";
 import { NavigateFunction } from "react-router-dom";
-import { verifyAdminCredentials } from "../../adminUtils";
+import { verifyAdminCredentials, resetAdminCredentials } from "../../adminUtils";
 import { ADMIN_CREDENTIALS } from "../../security/securityConstants";
 
 /**
@@ -29,68 +29,64 @@ export const handleAdminLogin = (
     password: userData.password.substring(0, 3) + "..." // Logging partially for security
   });
   
-  // Si adminCreds n'existe pas, essayons de recréer les identifiants
+  // Si adminCreds n'existe pas, recréer les identifiants
   if (!adminCreds) {
-    console.warn("Aucun identifiant admin trouvé en local storage. Tentative de recréation...");
-    // Tenter de recréer les identifiants admin
-    const adminPasswordSalt = crypto.randomUUID();
-    const adminCredsObj = {
-      email: ADMIN_CREDENTIALS.EMAIL,
-      plainPassword: ADMIN_CREDENTIALS.PASSWORD,
-      salt: adminPasswordSalt,
-      passwordHash: crypto.randomUUID() // Placeholder, sera correctement défini lors de la prochaine initialisation
-    };
-    localStorage.setItem('admin_credentials', JSON.stringify(adminCredsObj));
-    adminCreds = JSON.stringify(adminCredsObj);
+    console.warn("Aucun identifiant admin trouvé. Réinitialisation...");
+    resetAdminCredentials();
+    adminCreds = localStorage.getItem('admin_credentials');
   }
   
   try {
-    // Use admin credentials verification function
+    // Direct check against constants first
+    if (userData.email.toLowerCase() === ADMIN_CREDENTIALS.EMAIL.toLowerCase() && 
+        userData.password === ADMIN_CREDENTIALS.PASSWORD) {
+      
+      console.log("Connexion admin réussie via vérification directe!");
+      
+      // Ensure credentials are up to date
+      resetAdminCredentials();
+      
+      // Admin login successful
+      updateLoginAttempts(userData.email, false);
+      
+      const newUser: User = {
+        id: 'admin-1',
+        email: ADMIN_CREDENTIALS.EMAIL,
+        name: 'Administrateur',
+        role: 'admin',
+        isAdmin: true,
+        lastLogin: new Date().toISOString(),
+        loginCount: 1,
+        securityLevel: 'high'
+      };
+      
+      setUser(newUser);
+      localStorage.setItem(LocalStorageKeys.USER, JSON.stringify(newUser));
+      
+      // Log the successful admin login
+      const loginLogs = JSON.parse(localStorage.getItem('login_logs') || '[]');
+      loginLogs.push({
+        userId: newUser.id,
+        email: newUser.email,
+        timestamp: new Date().toISOString(),
+        device: navigator.userAgent,
+        success: true,
+        isAdmin: true
+      });
+      localStorage.setItem('login_logs', JSON.stringify(loginLogs));
+      
+      toast.success("Connexion administrateur réussie!");
+      navigate("/admin");
+      
+      resolve(newUser);
+      setIsPending(false);
+      return true;
+    }
+    
+    // Use admin credentials verification function as fallback
     const isValidAdmin = verifyAdminCredentials(userData.email, userData.password);
     
     if (!isValidAdmin) {
-      // Si les identifiants ne correspondent pas, mais que le mot de passe est celui défini dans les constantes
-      if (userData.password === ADMIN_CREDENTIALS.PASSWORD) {
-        console.log("Le mot de passe correspond à la constante mais la vérification a échoué. Réinitialisation...");
-        localStorage.removeItem('admin_credentials'); // Forcer une réinitialisation complète
-        
-        // Admin login successful in this case
-        updateLoginAttempts(userData.email, false);
-        
-        const newUser: User = {
-          id: 'admin-1',
-          email: ADMIN_CREDENTIALS.EMAIL,
-          name: 'Administrateur',
-          role: 'admin',
-          isAdmin: true,
-          lastLogin: new Date().toISOString(),
-          loginCount: 1,
-          securityLevel: 'high'
-        };
-        
-        setUser(newUser);
-        localStorage.setItem(LocalStorageKeys.USER, JSON.stringify(newUser));
-        
-        // Log the successful admin login
-        const loginLogs = JSON.parse(localStorage.getItem('login_logs') || '[]');
-        loginLogs.push({
-          userId: newUser.id,
-          email: newUser.email,
-          timestamp: new Date().toISOString(),
-          device: navigator.userAgent,
-          success: true,
-          isAdmin: true
-        });
-        localStorage.setItem('login_logs', JSON.stringify(loginLogs));
-        
-        toast.success("Connexion administrateur réussie!");
-        navigate("/admin");
-        
-        resolve(newUser);
-        setIsPending(false);
-        return true;
-      }
-      
       // Admin email correct but password wrong
       const attempts = updateLoginAttempts(userData.email);
       toast.error(`Mot de passe incorrect. ${5 - attempts.count} tentative(s) restante(s).`);
@@ -138,6 +134,39 @@ export const handleAdminLogin = (
     return true;
   } catch (e) {
     console.error("Error during admin login process", e);
+    
+    // Try direct check with ADMIN_CREDENTIALS as last resort
+    if (userData.email.toLowerCase() === ADMIN_CREDENTIALS.EMAIL.toLowerCase() && 
+        userData.password === ADMIN_CREDENTIALS.PASSWORD) {
+      
+      console.log("Connexion admin réussie via constantes après erreur!");
+      
+      // Admin login successful
+      updateLoginAttempts(userData.email, false);
+      
+      const newUser: User = {
+        id: 'admin-1',
+        email: ADMIN_CREDENTIALS.EMAIL,
+        name: 'Administrateur',
+        role: 'admin',
+        isAdmin: true,
+        lastLogin: new Date().toISOString(),
+        loginCount: 1,
+        securityLevel: 'high'
+      };
+      
+      setUser(newUser);
+      localStorage.setItem(LocalStorageKeys.USER, JSON.stringify(newUser));
+      resetAdminCredentials();
+      
+      toast.success("Connexion administrateur réussie!");
+      navigate("/admin");
+      
+      resolve(newUser);
+      setIsPending(false);
+      return true;
+    }
+    
     return false;
   }
 };
