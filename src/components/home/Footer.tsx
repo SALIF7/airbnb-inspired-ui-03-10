@@ -57,24 +57,24 @@ export const Footer = () => {
               <h3 className="text-xl font-semibold mb-4">Nos Services</h3>
               <ul className="space-y-3">
                 <li>
-                  <a href="/about#gardiennage" className="text-gray-300 hover:text-white transition-colors">
+                  <Link to="/about#gardiennage" className="text-gray-300 hover:text-white transition-colors">
                     Gardiennage
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/about#protection" className="text-gray-300 hover:text-white transition-colors">
+                  <Link to="/about#protection" className="text-gray-300 hover:text-white transition-colors">
                     Protection rapprochée
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/about#conseil" className="text-gray-300 hover:text-white transition-colors">
+                  <Link to="/about#conseil" className="text-gray-300 hover:text-white transition-colors">
                     Conseil en sécurité
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/about#installation" className="text-gray-300 hover:text-white transition-colors">
+                  <Link to="/about#installation" className="text-gray-300 hover:text-white transition-colors">
                     Installation de systèmes
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </motion.div>
