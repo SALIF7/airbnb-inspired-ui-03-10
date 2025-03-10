@@ -27,8 +27,12 @@ const initialContext: AuthContextType = {
   refreshSession: () => {},
   checkAccountLocked: () => ({ locked: false, remainingMinutes: 0 }),
   updateLoginAttempts: () => ({ count: 0, timestamp: 0 }),
+  resetLoginAttempts: () => {},
+  unlockUserAccount: () => false,
   checkDeviceTrusted: () => false,
-  handleSecurityAlert: () => {}
+  handleSecurityAlert: () => {},
+  getAccountResetRequests: () => [],
+  updateResetRequestStatus: () => false
 };
 
 const AuthContext = createContext<AuthContextType>(initialContext);
@@ -43,7 +47,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     updateUserSecurityLevel, 
     checkAccountLocked, 
     getLoginAttempts, 
-    updateLoginAttempts 
+    updateLoginAttempts,
+    resetLoginAttempts,
+    getAccountResetRequests,
+    updateResetRequestStatus
   } = useSecurityFeatures(user);
 
   // Define missing security functions
@@ -122,8 +129,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     refreshSession,
     checkAccountLocked,
     updateLoginAttempts,
+    resetLoginAttempts,
+    unlockUserAccount,
     checkDeviceTrusted,
-    handleSecurityAlert
+    handleSecurityAlert,
+    getAccountResetRequests,
+    updateResetRequestStatus
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

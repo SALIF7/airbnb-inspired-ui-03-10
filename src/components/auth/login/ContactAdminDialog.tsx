@@ -30,12 +30,24 @@ const ContactAdminDialog = ({ open, onOpenChange, email }: ContactAdminDialogPro
     // Enregistrer la demande de contact dans le localStorage
     const contactRequests = JSON.parse(localStorage.getItem('admin_contact_requests') || '[]');
     contactRequests.push({
+      id: Date.now().toString(),
       email: email,
       message: contactMessage,
       timestamp: new Date().toISOString(),
+      type: 'account_reset',
       status: 'pending'
     });
     localStorage.setItem('admin_contact_requests', JSON.stringify(contactRequests));
+    
+    // Log this request in security logs
+    const securityLogs = JSON.parse(localStorage.getItem('security_logs') || '[]');
+    securityLogs.push({
+      type: 'account_reset_request',
+      email: email,
+      timestamp: new Date().toISOString(),
+      details: { message: contactMessage }
+    });
+    localStorage.setItem('security_logs', JSON.stringify(securityLogs));
     
     toast.success("Votre demande a été envoyée à l'administrateur");
     onOpenChange(false);

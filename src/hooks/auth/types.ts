@@ -54,8 +54,12 @@ export interface AuthContextType {
   refreshSession: () => void;
   checkAccountLocked: (email: string) => { locked: boolean; remainingMinutes: number };
   updateLoginAttempts: (email: string, increment?: boolean) => { count: number; timestamp: number };
+  resetLoginAttempts: (email: string) => void;
+  unlockUserAccount: (email: string) => boolean;
   checkDeviceTrusted: (userId: string) => boolean;
   handleSecurityAlert: (type: string, details: any) => void;
+  getAccountResetRequests: () => any[];
+  updateResetRequestStatus: (requestId: string, status: 'approved' | 'rejected', unlockAccount?: boolean) => boolean;
 }
 
 export interface LoginAttempt {
@@ -82,4 +86,15 @@ export interface SecurityWarning {
   message: string;
   details?: any;
   resolved?: boolean;
+}
+
+export interface AccountResetRequest {
+  id: string;
+  email: string;
+  message: string;
+  timestamp: string;
+  type: 'account_reset';
+  status: 'pending' | 'approved' | 'rejected';
+  resolvedAt?: string;
+  resolvedBy?: string;
 }
