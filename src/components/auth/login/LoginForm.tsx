@@ -9,7 +9,7 @@ import { AlertCircle } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import PasswordInput from "./PasswordInput";
 import TwoFactorForm from "./TwoFactorForm";
-import { useLoginForm } from "@/hooks/auth/useLoginForm";
+import { useLoginForm } from "@/hooks/useLoginForm";
 import { Separator } from "@/components/ui/separator";
 
 interface LoginFormProps {

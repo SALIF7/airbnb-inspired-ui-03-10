@@ -2,19 +2,20 @@
 import { v4 as uuidv4 } from 'uuid';
 import CryptoJS from 'crypto-js';
 import { logSecurityEvent } from './securityUtils';
-
-// Constantes pour les identifiants de démonstration
-const ADMIN_EMAIL = 'SHJob@Center.com';
-const ADMIN_PASSWORD = 'SHJob@Center==12@';
+import { ADMIN_CREDENTIALS } from './security/securityConstants';
 
 // Ensure an admin account exists for demo purposes
 export const ensureAdminAccount = () => {
   console.log("Initialisation du compte admin...");
   
+  // Vérifier si les identifiants admin existent déjà
+  const existingAdminCreds = localStorage.getItem('admin_credentials');
+  let credentialsChanged = false;
+  
   // Créer un compte admin par défaut
   const defaultAdmin = {
     id: 'admin-1',
-    email: ADMIN_EMAIL,
+    email: ADMIN_CREDENTIALS.EMAIL,
     name: 'Admin User',
     role: 'admin',
     isAdmin: true,
@@ -33,19 +34,19 @@ export const ensureAdminAccount = () => {
   // Note: In a real app, you would never store credentials in localStorage like this
   // This is only for demo purposes
   const adminPasswordSalt = uuidv4();
-  // Utilisation du mot de passe exact tel qu'affiché dans l'interface utilisateur
-  const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
+  // Utilisation du mot de passe exact de l'administrateur
+  const hashedPassword = CryptoJS.SHA256(`${ADMIN_CREDENTIALS.PASSWORD}${adminPasswordSalt}`).toString();
   
-  // Vérifier si les identifiants admin existent déjà
-  const existingAdminCreds = localStorage.getItem('admin_credentials');
   if (!existingAdminCreds) {
     // Stocker les identifiants admin
     localStorage.setItem('admin_credentials', JSON.stringify({
-      email: ADMIN_EMAIL,
+      email: ADMIN_CREDENTIALS.EMAIL,
       passwordHash: hashedPassword,
       salt: adminPasswordSalt,
-      plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
+      plainPassword: ADMIN_CREDENTIALS.PASSWORD // Pour la démo uniquement
     }));
+    credentialsChanged = true;
+    console.log("Identifiants admin créés avec succès");
   }
   
   // S'assurer que l'utilisateur admin existe
@@ -57,11 +58,12 @@ export const ensureAdminAccount = () => {
   // Initialize security logs
   initializeSecurityLogs();
   
-  console.log("Compte admin configuré avec:", {
-    email: ADMIN_EMAIL,
-    password: ADMIN_PASSWORD,
-    passwordHash: hashedPassword.substring(0, 10) + "..."
+  console.log("Compte admin vérifié avec:", {
+    email: ADMIN_CREDENTIALS.EMAIL,
+    plainPassword: ADMIN_CREDENTIALS.PASSWORD.substring(0, 3) + "..."
   });
+  
+  return credentialsChanged;
 };
 
 // Initialize security logs structure
@@ -91,69 +93,77 @@ export const resetAdminCredentials = () => {
     
     // Créer un nouveau sel
     const adminPasswordSalt = uuidv4();
-    const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
+    const hashedPassword = CryptoJS.SHA256(`${ADMIN_CREDENTIALS.PASSWORD}${adminPasswordSalt}`).toString();
     
     localStorage.setItem('admin_credentials', JSON.stringify({
-      email: ADMIN_EMAIL,
+      email: ADMIN_CREDENTIALS.EMAIL,
       passwordHash: hashedPassword,
       salt: adminPasswordSalt,
-      plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
+      plainPassword: ADMIN_CREDENTIALS.PASSWORD // Pour la démo uniquement
     }));
     
     console.log("Identifiants admin créés avec succès:", {
-      email: ADMIN_EMAIL,
-      plainPassword: ADMIN_PASSWORD
+      email: ADMIN_CREDENTIALS.EMAIL,
+      plainPassword: ADMIN_CREDENTIALS.PASSWORD.substring(0, 3) + "..."
     });
     
     return true;
   }
   
+  let credentialsUpdated = false;
+  
   // Si les identifiants existent, vérifier qu'ils sont corrects
   try {
     const parsedCreds = JSON.parse(existingAdminCreds);
     
-    if (parsedCreds.email !== ADMIN_EMAIL || !parsedCreds.plainPassword) {
-      console.log("Identifiants admin incorrects ou incomplets. Mise à jour...");
+    // Vérifier si les identifiants correspondent aux valeurs attendues
+    if (parsedCreds.email !== ADMIN_CREDENTIALS.EMAIL || 
+        parsedCreds.plainPassword !== ADMIN_CREDENTIALS.PASSWORD) {
+      console.log("Identifiants admin incorrects. Mise à jour...");
       
       // Créer un nouveau sel
       const adminPasswordSalt = uuidv4();
-      const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
+      const hashedPassword = CryptoJS.SHA256(`${ADMIN_CREDENTIALS.PASSWORD}${adminPasswordSalt}`).toString();
       
       localStorage.setItem('admin_credentials', JSON.stringify({
-        email: ADMIN_EMAIL,
+        email: ADMIN_CREDENTIALS.EMAIL,
         passwordHash: hashedPassword,
         salt: adminPasswordSalt,
-        plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
+        plainPassword: ADMIN_CREDENTIALS.PASSWORD // Pour la démo uniquement
       }));
       
       console.log("Identifiants admin mis à jour avec succès:", {
-        email: ADMIN_EMAIL,
-        plainPassword: ADMIN_PASSWORD
+        email: ADMIN_CREDENTIALS.EMAIL,
+        plainPassword: ADMIN_CREDENTIALS.PASSWORD.substring(0, 3) + "..."
       });
+      
+      credentialsUpdated = true;
     } else {
-      console.log("Identifiants admin existants et corrects. Aucune modification nécessaire.");
+      console.log("Identifiants admin existants et corrects.");
     }
   } catch (e) {
     console.error("Erreur lors de la vérification des identifiants admin:", e);
     
     // En cas d'erreur, recréer les identifiants
     const adminPasswordSalt = uuidv4();
-    const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
+    const hashedPassword = CryptoJS.SHA256(`${ADMIN_CREDENTIALS.PASSWORD}${adminPasswordSalt}`).toString();
     
     localStorage.setItem('admin_credentials', JSON.stringify({
-      email: ADMIN_EMAIL,
+      email: ADMIN_CREDENTIALS.EMAIL,
       passwordHash: hashedPassword,
       salt: adminPasswordSalt,
-      plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
+      plainPassword: ADMIN_CREDENTIALS.PASSWORD // Pour la démo uniquement
     }));
     
     console.log("Identifiants admin réinitialisés suite à une erreur:", {
-      email: ADMIN_EMAIL,
-      plainPassword: ADMIN_PASSWORD
+      email: ADMIN_CREDENTIALS.EMAIL,
+      plainPassword: ADMIN_CREDENTIALS.PASSWORD.substring(0, 3) + "..."
     });
+    
+    credentialsUpdated = true;
   }
   
-  return true;
+  return credentialsUpdated;
 };
 
 // Vérification des identifiants admin
@@ -168,10 +178,24 @@ export const verifyAdminCredentials = (email: string, password: string): boolean
     const adminCreds = JSON.parse(adminCredsStr);
     const emailMatch = email.toLowerCase() === adminCreds.email.toLowerCase();
     
-    // Pour la démo, vérifier à la fois le hash et le mot de passe en clair
-    const passwordMatch = 
-      password === adminCreds.plainPassword || 
-      CryptoJS.SHA256(`${password}${adminCreds.salt}`).toString() === adminCreds.passwordHash;
+    // Pour la démo, vérifier le mot de passe en priorité avec la valeur exacte (plainPassword)
+    let passwordMatch = false;
+    
+    if (adminCreds.plainPassword) {
+      passwordMatch = password === adminCreds.plainPassword;
+    }
+    
+    // Si le mot de passe en clair ne correspond pas, essayer avec le hash
+    if (!passwordMatch && adminCreds.salt) {
+      passwordMatch = CryptoJS.SHA256(`${password}${adminCreds.salt}`).toString() === adminCreds.passwordHash;
+    }
+    
+    // Vérifier également si le mot de passe correspond à la constante directement (failsafe)
+    if (!passwordMatch && password === ADMIN_CREDENTIALS.PASSWORD) {
+      console.log("Mot de passe correspondant aux constantes mais pas aux credentials stockés. Mise à jour...");
+      resetAdminCredentials();
+      passwordMatch = true;
+    }
     
     console.log("Vérification des identifiants admin:", {
       emailMatch,
@@ -184,6 +208,8 @@ export const verifyAdminCredentials = (email: string, password: string): boolean
     return emailMatch && passwordMatch;
   } catch (error) {
     console.error("Erreur lors de la vérification des identifiants admin:", error);
-    return false;
+    // En cas d'erreur, essayer avec les constantes directement
+    return email.toLowerCase() === ADMIN_CREDENTIALS.EMAIL.toLowerCase() && 
+           password === ADMIN_CREDENTIALS.PASSWORD;
   }
 };

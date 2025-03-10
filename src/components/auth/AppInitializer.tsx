@@ -1,6 +1,7 @@
 
 import { useEffect } from 'react';
 import { ensureAdminAccount, resetAdminCredentials } from '@/hooks/auth/adminUtils';
+import { toast } from 'sonner';
 
 const AppInitializer = () => {
   useEffect(() => {
@@ -8,11 +9,15 @@ const AppInitializer = () => {
     console.log("Initialisation des données pour la démo...");
     
     // Garantir que le compte admin existe et a les bons identifiants
-    ensureAdminAccount();
+    const adminAccountCreated = ensureAdminAccount();
     
     // Pour les besoins de la démo, réinitialiser les identifiants admin
     // afin de garantir que le mot de passe correct est utilisé
-    resetAdminCredentials();
+    const adminCredsReset = resetAdminCredentials();
+    
+    if (adminAccountCreated || adminCredsReset) {
+      console.log("Identifiants admin initialisés avec succès");
+    }
     
     // Initialiser d'autres données si nécessaire
     if (!localStorage.getItem('all_users')) {
