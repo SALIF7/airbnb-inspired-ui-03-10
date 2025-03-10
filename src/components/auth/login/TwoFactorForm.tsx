@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 export interface TwoFactorFormProps {
   value: string;
   onChange: (value: string) => void;
-  onSubmit: (e?: React.FormEvent) => void;
+  onSubmit: (e?: FormEvent) => void;
   onBack: () => void;
   isPending?: boolean;
 }

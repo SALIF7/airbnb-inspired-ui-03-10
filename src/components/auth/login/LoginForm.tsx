@@ -54,8 +54,8 @@ const LoginForm = ({
   if (showTwoFactorInput) {
     return (
       <TwoFactorForm
-        twoFactorCode={twoFactorCode}
-        onTwoFactorCodeChange={handleTwoFactorCodeChange}
+        value={twoFactorCode}
+        onChange={handleTwoFactorCodeChange}
         onSubmit={handleSubmit}
         onBack={handleBackToLogin}
       />

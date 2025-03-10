@@ -10,7 +10,7 @@ import { SocialSettingsTab } from './SocialSettingsTab';
 import { ThemeSettingsTab } from './ThemeSettingsTab';
 import { FooterSettingsTab } from './FooterSettingsTab';
 import { ImportExportTab } from './ImportExportTab';
-import { AccountResetRequestsTab } from './AccountResetRequestsTab';
+import AccountResetRequestsTab from './AccountResetRequestsTab';
 import { AdminStatusManager } from '../status/AdminStatusManager';
 import { useTabsManagement } from './hooks/useTabsManagement';
 
