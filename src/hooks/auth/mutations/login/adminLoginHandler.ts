@@ -1,9 +1,9 @@
 
 import { User } from "../../types";
 import { toast } from "sonner";
-import CryptoJS from "crypto-js";
 import { LocalStorageKeys } from "../../constants";
 import { NavigateFunction } from "react-router-dom";
+import { verifyAdminCredentials } from "../../adminUtils";
 
 /**
  * Handle admin login attempt
@@ -18,34 +18,23 @@ export const handleAdminLogin = (
   resolve: (value: User | void) => void,
   reject: (reason: Error) => void
 ): boolean => {
-  if (!adminCreds) return false;
+  if (!adminCreds) {
+    console.error("Aucun identifiant admin trouvé");
+    return false;
+  }
   
   try {
     const adminData = JSON.parse(adminCreds);
     // Check if this is the admin trying to log in
     if (userData.email.toLowerCase() === adminData.email.toLowerCase()) {
       console.log("Tentative de connexion admin détectée avec:", {
-        email: userData.email,
-        passwordMatch: userData.password === adminData.plainPassword
+        email: userData.email
       });
       
-      // Pour les besoins de la démo, nous acceptons le mot de passe codé en dur
-      const hashedInputPassword = CryptoJS.SHA256(`${userData.password}${adminData.salt}`).toString();
-      const plainPasswordMatch = userData.password === adminData.plainPassword;
-      const hashMatch = hashedInputPassword === adminData.passwordHash;
+      // Utiliser la fonction de vérification des identifiants admin
+      const isValidAdmin = verifyAdminCredentials(userData.email, userData.password);
       
-      // Accepter soit le hash correspondant, soit le mot de passe en clair pour faciliter la démo
-      if (!hashMatch && !plainPasswordMatch) {
-        // Log détaillé pour le débogage (en production, ne jamais exposer les mots de passe!)
-        console.log("Échec d'authentification admin:", { 
-          inputPassword: userData.password,
-          expectedPlainPassword: adminData.plainPassword,
-          passwordMatch: plainPasswordMatch,
-          expectedHash: adminData.passwordHash,
-          calculatedHash: hashedInputPassword,
-          hashMatch: hashMatch
-        });
-        
+      if (!isValidAdmin) {
         // Admin email correct but password wrong
         const attempts = updateLoginAttempts(userData.email);
         toast.error(`Mot de passe incorrect. ${5 - attempts.count} tentative(s) restante(s).`);
