@@ -36,13 +36,17 @@ export const ensureAdminAccount = () => {
   // Utilisation du mot de passe exact tel qu'affiché dans l'interface utilisateur
   const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
   
-  // Stocker les identifiants admin, toujours les écraser pour être sûr qu'ils sont corrects
-  localStorage.setItem('admin_credentials', JSON.stringify({
-    email: ADMIN_EMAIL,
-    passwordHash: hashedPassword,
-    salt: adminPasswordSalt,
-    plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
-  }));
+  // Vérifier si les identifiants admin existent déjà
+  const existingAdminCreds = localStorage.getItem('admin_credentials');
+  if (!existingAdminCreds) {
+    // Stocker les identifiants admin
+    localStorage.setItem('admin_credentials', JSON.stringify({
+      email: ADMIN_EMAIL,
+      passwordHash: hashedPassword,
+      salt: adminPasswordSalt,
+      plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
+    }));
+  }
   
   // S'assurer que l'utilisateur admin existe
   const existingUser = localStorage.getItem('user_data');
@@ -77,23 +81,77 @@ const initializeSecurityLogs = () => {
 
 // Fonction pour réinitialiser les identifiants de l'administrateur
 export const resetAdminCredentials = () => {
-  console.log("Réinitialisation des identifiants admin...");
+  console.log("Vérification et mise à jour des identifiants admin...");
   
-  // Créer un nouveau sel mais s'assurer que le mot de passe reste inchangé
-  const adminPasswordSalt = uuidv4();
-  const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
+  // Vérifier si les identifiants admin existent déjà
+  const existingAdminCreds = localStorage.getItem('admin_credentials');
   
-  localStorage.setItem('admin_credentials', JSON.stringify({
-    email: ADMIN_EMAIL,
-    passwordHash: hashedPassword,
-    salt: adminPasswordSalt,
-    plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
-  }));
+  if (!existingAdminCreds) {
+    console.log("Aucun identifiant admin trouvé. Création des identifiants...");
+    
+    // Créer un nouveau sel
+    const adminPasswordSalt = uuidv4();
+    const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
+    
+    localStorage.setItem('admin_credentials', JSON.stringify({
+      email: ADMIN_EMAIL,
+      passwordHash: hashedPassword,
+      salt: adminPasswordSalt,
+      plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
+    }));
+    
+    console.log("Identifiants admin créés avec succès:", {
+      email: ADMIN_EMAIL,
+      plainPassword: ADMIN_PASSWORD
+    });
+    
+    return true;
+  }
   
-  console.log("Identifiants admin réinitialisés avec succès:", {
-    email: ADMIN_EMAIL,
-    plainPassword: ADMIN_PASSWORD
-  });
+  // Si les identifiants existent, vérifier qu'ils sont corrects
+  try {
+    const parsedCreds = JSON.parse(existingAdminCreds);
+    
+    if (parsedCreds.email !== ADMIN_EMAIL || !parsedCreds.plainPassword) {
+      console.log("Identifiants admin incorrects ou incomplets. Mise à jour...");
+      
+      // Créer un nouveau sel
+      const adminPasswordSalt = uuidv4();
+      const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
+      
+      localStorage.setItem('admin_credentials', JSON.stringify({
+        email: ADMIN_EMAIL,
+        passwordHash: hashedPassword,
+        salt: adminPasswordSalt,
+        plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
+      }));
+      
+      console.log("Identifiants admin mis à jour avec succès:", {
+        email: ADMIN_EMAIL,
+        plainPassword: ADMIN_PASSWORD
+      });
+    } else {
+      console.log("Identifiants admin existants et corrects. Aucune modification nécessaire.");
+    }
+  } catch (e) {
+    console.error("Erreur lors de la vérification des identifiants admin:", e);
+    
+    // En cas d'erreur, recréer les identifiants
+    const adminPasswordSalt = uuidv4();
+    const hashedPassword = CryptoJS.SHA256(`${ADMIN_PASSWORD}${adminPasswordSalt}`).toString();
+    
+    localStorage.setItem('admin_credentials', JSON.stringify({
+      email: ADMIN_EMAIL,
+      passwordHash: hashedPassword,
+      salt: adminPasswordSalt,
+      plainPassword: ADMIN_PASSWORD // Pour la démo uniquement
+    }));
+    
+    console.log("Identifiants admin réinitialisés suite à une erreur:", {
+      email: ADMIN_EMAIL,
+      plainPassword: ADMIN_PASSWORD
+    });
+  }
   
   return true;
 };

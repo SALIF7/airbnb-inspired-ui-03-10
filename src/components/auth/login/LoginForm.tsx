@@ -11,7 +11,6 @@ import PasswordInput from "./PasswordInput";
 import TwoFactorForm from "./TwoFactorForm";
 import { useLoginForm } from "@/hooks/auth/useLoginForm";
 import { Separator } from "@/components/ui/separator";
-import { Card } from "@/components/ui/card";
 
 interface LoginFormProps {
   securityInfo: { locked: boolean; remainingMinutes: number } | null;
@@ -38,7 +37,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
     handleSubmit,
   } = useLoginForm();
   const [rememberMe, setRememberMe] = useState(false);
-  const [showAdminHelp, setShowAdminHelp] = useState(false);
 
   const combinedEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleEmailChange(e);
@@ -70,30 +68,6 @@ const LoginForm: React.FC<LoginFormProps> = ({
   return (
     <form onSubmit={handleLoginSubmit} className="mt-8 space-y-6">
       <div className="rounded-md space-y-4">
-        {/* Admin Login Helper Card */}
-        <Card className="p-4 bg-blue-50 border-blue-200 mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium text-blue-800">Identifiants de démonstration</h3>
-            <Button 
-              type="button" 
-              variant="ghost" 
-              size="sm" 
-              className="h-6 text-xs"
-              onClick={() => setShowAdminHelp(!showAdminHelp)}
-            >
-              {showAdminHelp ? "Cacher" : "Afficher"}
-            </Button>
-          </div>
-          
-          {showAdminHelp && (
-            <div className="text-xs text-blue-700 space-y-1">
-              <p><strong>Email:</strong> SHJob@Center.com</p>
-              <p><strong>Mot de passe:</strong> SHJob@Center==12@</p>
-              <p className="mt-2 text-blue-600">Utilisez ces identifiants pour accéder au panneau d'administration.</p>
-            </div>
-          )}
-        </Card>
-
         <div>
           <label htmlFor="email" className="sr-only">
             Adresse email
