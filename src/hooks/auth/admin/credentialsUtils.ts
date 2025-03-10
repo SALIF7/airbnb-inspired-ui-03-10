@@ -58,4 +58,3 @@ export const verifyAdminCredentials = (email: string, password: string): boolean
            password === ADMIN_CREDENTIALS.PASSWORD;
   }
 };
-

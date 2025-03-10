@@ -70,4 +70,3 @@ export const ensureAdminAccount = () => {
   
   return credentialsChanged;
 };
-

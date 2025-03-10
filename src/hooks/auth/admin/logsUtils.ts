@@ -15,4 +15,3 @@ export const initializeSecurityLogs = () => {
     localStorage.setItem('suspicious_activities', JSON.stringify([]));
   }
 };
-
