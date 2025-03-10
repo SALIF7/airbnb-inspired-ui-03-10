@@ -27,35 +27,37 @@ export const CompensationFields: React.FC<CompensationFieldsProps> = ({
       {isHousingOffer ? (
         <div>
           <Label htmlFor="price" className="block text-sm font-medium mb-1">
-            Prix (FCFA) <span className="text-red-500">*</span>
+            Prix (€) <span className="text-red-500">*</span>
           </Label>
           <Input
             id="price"
             type="number"
-            value={price || ''}
+            value={price}
             onChange={(e) => setPrice && setPrice(Number(e.target.value))}
-            placeholder="Prix du logement en FCFA"
+            placeholder="Prix du logement en euros"
             min="0"
-            step="1"
+            step="0.01"
             required
           />
+          <p className="text-xs text-gray-500 mt-1">Prix en FCFA: {Math.round(price * 655.957).toLocaleString('fr-FR')} FCFA</p>
         </div>
       ) : (
         <>
           <div>
             <Label htmlFor="salary" className="block text-sm font-medium mb-1">
-              Salaire (FCFA) <span className="text-red-500">*</span>
+              Salaire (€) <span className="text-red-500">*</span>
             </Label>
             <Input
               id="salary"
               type="number"
-              value={salary || ''}
+              value={salary}
               onChange={(e) => setSalary(Number(e.target.value))}
-              placeholder="Salaire mensuel en FCFA"
+              placeholder="Salaire mensuel en euros"
               min="0"
-              step="1"
+              step="0.01"
               required
             />
+            <p className="text-xs text-gray-500 mt-1">Salaire en FCFA: {Math.round(salary * 655.957).toLocaleString('fr-FR')} FCFA</p>
           </div>
 
           <div>
@@ -65,7 +67,7 @@ export const CompensationFields: React.FC<CompensationFieldsProps> = ({
             <Input
               id="positions"
               type="number"
-              value={positions || ''}
+              value={positions}
               onChange={(e) => setPositions(Number(e.target.value))}
               placeholder="Nombre de postes disponibles"
               min="1"

@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react';
 import { JobDomain, JobContract } from '@/types/job';
 import { UseJobFormProps, JobFormState, JobFormStateWithSetters } from './types';
 
-export const useFormState = ({ selectedJob, isOpen, setIsOpen }: UseJobFormProps): JobFormStateWithSetters => {
+export const useFormState = ({ selectedJob }: UseJobFormProps): JobFormStateWithSetters => {
+  const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   
@@ -28,15 +29,16 @@ export const useFormState = ({ selectedJob, isOpen, setIsOpen }: UseJobFormProps
   // Populate form when selectedJob changes
   useEffect(() => {
     if (selectedJob) {
-      setTitle(selectedJob.title || '');
-      setDomain(selectedJob.domain || 'residential_security');
-      setDescription(selectedJob.description || '');
-      setRequirements(selectedJob.requirements || '');
-      setContract(selectedJob.contract || 'full_time');
-      setLocation(selectedJob.location || '');
-      setSalary(selectedJob.salary?.amount || 0);
-      setPositions(selectedJob.positions || 1);
-      setDeadline(selectedJob.deadline || '');
+      setIsOpen(true);
+      setTitle(selectedJob.title);
+      setDomain(selectedJob.domain);
+      setDescription(selectedJob.description);
+      setRequirements(selectedJob.requirements);
+      setContract(selectedJob.contract);
+      setLocation(selectedJob.location);
+      setSalary(selectedJob.salary.amount);
+      setPositions(selectedJob.positions);
+      setDeadline(selectedJob.deadline);
       setIsHousingOffer(!!selectedJob.isHousingOffer);
       setPrice(selectedJob.price || 0);
       setBedrooms(selectedJob.bedrooms || 1);
@@ -44,24 +46,6 @@ export const useFormState = ({ selectedJob, isOpen, setIsOpen }: UseJobFormProps
       setImages(selectedJob.images || []);
       setIsPublished(selectedJob.status === 'active');
       setFeaturedImage(selectedJob.image || '');
-    } else {
-      // Reset form when no job is selected
-      setTitle('');
-      setDomain('residential_security');
-      setDescription('');
-      setRequirements('');
-      setContract('full_time');
-      setLocation('');
-      setSalary(0);
-      setPositions(1);
-      setDeadline('');
-      setIsHousingOffer(false);
-      setPrice(0);
-      setBedrooms(1);
-      setBathrooms(1);
-      setImages([]);
-      setIsPublished(true);
-      setFeaturedImage('');
     }
   }, [selectedJob]);
 

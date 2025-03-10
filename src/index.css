@@ -1,13 +1,12 @@
+
 /* Base styles and variables */
 @import './styles/base.css';
 
 /* Layout styles */
 @import './styles/layout/container.css';
-@import './styles/layout/typography.css';
-@import './styles/layout/variables.css';
 
 /* Animation-related styles */
-@import './styles/animations/index.css';
+@import './styles/animations.css';
 @import './styles/animations/transitions.css';
 
 /* Component-specific styles */
@@ -16,11 +15,8 @@
 @import './styles/components/logo.css';
 @import './styles/components/misc.css';
 @import './styles/components/badges.css';
-@import './styles/components/messages.css';
 @import './styles/components/admin-messages.css';
-@import './styles/components/whatsapp/variables.css';
-@import './styles/components/whatsapp/messages.css';
-@import './styles/components/notifications/index.css';
+@import './styles/components/whatsapp/index.css';
 
 /* Theme-specific styles */
 @import './styles/theme.css';
@@ -28,60 +24,31 @@
 /* Utility classes */
 @import './styles/utilities.css';
 
+/* Responsive display utilities */
+.xs\:block {
+  @media (min-width: 480px) {
+    display: block;
+  }
+}
+
+.xs\:hidden {
+  @media (min-width: 480px) {
+    display: none;
+  }
+}
+
 /* Make buttons more visible */
 button {
   position: relative;
   z-index: 10;
 }
 
-/* Improved dropdown menu visibility */
+/* Make dropdown menus visible */
 .dropdown-content, 
 [role="menu"],
-[data-radix-popper-content-wrapper],
-.radix-dropdown-content,
-[data-state="open"],
-.select-content,
-[data-state="open"] > div,
-[data-radix-select-content] {
+[data-radix-popper-content-wrapper] {
   background-color: white !important;
   border: 1px solid #e2e8f0 !important;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
   z-index: 50 !important;
-  color: #1f2937 !important;
-}
-
-/* Ensure menus are properly displayed */
-[data-radix-popper-content-wrapper] {
-  max-height: none !important;
-  max-width: none !important;
-  overflow: visible !important;
-  transform-origin: var(--radix-popper-transform-origin);
-}
-
-/* Fix for dialog and modals */
-[role="dialog"],
-.radix-dialog-content,
-[data-state="open"] {
-  z-index: 1000 !important;
-}
-
-/* Fix for select menu items */
-[role="option"] {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-}
-
-[role="option"]:hover {
-  background-color: #f3f4f6 !important;
-}
-
-/* Fix for tooltip rendering */
-[data-radix-tooltip-content] {
-  z-index: 999 !important;
-  background-color: #1f2937 !important;
-  color: white !important;
-  padding: 0.5rem 0.75rem !important;
-  border-radius: 0.25rem !important;
-  font-size: 0.875rem !important;
-  line-height: 1.25rem !important;
 }

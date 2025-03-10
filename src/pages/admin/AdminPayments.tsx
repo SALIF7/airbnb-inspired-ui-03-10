@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminTopbar } from '@/components/admin/AdminTopbar';
@@ -21,8 +22,27 @@ const AdminPayments = () => {
   const { data: payments = [], isLoading, error } = useQuery<Payment[], Error>({
     queryKey: ['admin-payments'],
     queryFn: async () => {
-      // Retourne un tableau vide au lieu de mock data
-      return [];
+      // Using mock data for now
+      return [
+        {
+          id: "1",
+          amount: 250.00,
+          status: "completed",
+          date: "2024-02-15",
+          customer: "John Doe",
+          type: "booking",
+          listingId: "1",
+        },
+        {
+          id: "2",
+          amount: 180.00,
+          status: "refunded",
+          date: "2024-02-16",
+          customer: "Jane Smith",
+          type: "refund",
+          listingId: "2",
+        },
+      ];
     },
   });
 
@@ -120,11 +140,8 @@ const AdminPayments = () => {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-10 bg-white rounded-lg shadow">
-                <p className="text-gray-500 mb-4">Aucun paiement disponible</p>
-                <p className="text-sm text-gray-400">
-                  Les paiements apparaîtront ici une fois que vos clients commenceront à réserver.
-                </p>
+              <div className="text-center py-10">
+                <p className="text-gray-500">Aucun paiement disponible</p>
               </div>
             )}
           </main>

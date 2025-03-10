@@ -1,119 +1,63 @@
 
-/* Status view indicators */
-
-/* Status view progress animation */
-@keyframes status-progress {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-/* Status ring indicators */
-.status-ring {
-  position: relative;
-}
-
-.status-ring::after {
-  content: '';
+/* Online & Offline indicators */
+.whatsapp-online-indicator {
   position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
+  bottom: 0;
+  right: 0;
+  width: var(--whatsapp-indicator-size);
+  height: var(--whatsapp-indicator-size);
+  background-color: var(--whatsapp-secondary);
+  border: 2px solid white;
   border-radius: 50%;
-  border: 2px solid #00A884;
-  z-index: 1;
 }
 
-.status-ring-viewed::after {
-  border-color: #bdbdbd;
-}
-
-/* Viewers list styling */
-.status-viewers-container {
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 8px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.status-viewer-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.status-viewer-item:last-child {
-  border-bottom: none;
-}
-
-.status-viewer-avatar {
-  width: 32px;
-  height: 32px;
+.whatsapp-offline-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: var(--whatsapp-indicator-size);
+  height: var(--whatsapp-indicator-size);
+  background-color: #8696a0;
+  border: 2px solid white;
   border-radius: 50%;
-  margin-right: 10px;
-  overflow: hidden;
 }
 
-.status-viewer-info {
-  flex: 1;
+/* Read and sent indicators */
+.whatsapp-tick {
+  margin-left: 4px;
+  vertical-align: middle;
 }
 
-.status-viewer-name {
-  color: white;
-  font-size: 14px;
-  margin-bottom: 2px;
+.whatsapp-single-tick {
+  color: #8696a0;
 }
 
-.status-viewer-time {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 11px;
+.whatsapp-read-tick {
+  color: #53bdeb;
 }
 
-/* Status time indicators */
-.status-time {
-  font-size: 12px;
-  color: rgba(0, 0, 0, 0.5);
+/* Recording indicators */
+.recording-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #FF0000;
+  animation: pulse 1.5s infinite;
 }
 
-/* Status viewed count badge */
-.status-view-count-badge {
-  display: flex;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 20px;
-  padding: 2px 6px;
-  font-size: 12px;
-}
-
-.dark .status-view-count-badge {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.status-view-count-badge svg {
-  margin-right: 4px;
-  width: 14px;
-  height: 14px;
-  opacity: 0.7;
-}
-
-/* Status progress bar animation */
-.status-progress-bar {
-  height: 3px;
-  background-color: #e0e0e0;
-  margin-bottom: 1px;
-  overflow: hidden;
-  position: relative;
-}
-
-.status-progress-inner {
-  height: 100%;
-  background-color: #00A884;
-  width: 0;
-  animation: status-progress-anim 5s linear forwards;
-}
-
-@keyframes status-progress-anim {
-  from { width: 0; }
-  to { width: 100%; }
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7);
+  }
+  
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 8px rgba(255, 0, 0, 0);
+  }
+  
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 0, 0, 0);
+  }
 }

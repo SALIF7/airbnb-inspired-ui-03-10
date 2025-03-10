@@ -14,7 +14,7 @@ export const PopularNeighborhoods = ({ setSearchTerm }: PopularNeighborhoodsProp
     <div className="mt-6 mb-6 w-full px-2 py-3">
       <div className="w-full">
         <h2 className="text-2xl font-serif font-bold text-sholom-dark mb-4">
-          Quartiers populaires
+          Quartiers populaires à Lomé
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-6 gap-4">
           {neighborhoods.map(neighborhood => (

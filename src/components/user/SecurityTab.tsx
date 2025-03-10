@@ -1,31 +1,43 @@
 
 import React from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { PasswordSection } from './security/PasswordSection';
-import { TwoFactorSection } from './security/TwoFactorSection';
-import { DevicesSection } from './security/DevicesSection';
-import { LoginHistorySection } from './security/LoginHistorySection';
-import { SecurityScanSection } from './security/SecurityScanSection';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AlertTriangle } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Lock } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const SecurityTab: React.FC = () => {
-  const { user } = useAuth();
+  const updatePassword = () => {
+    toast.success("Mot de passe mis à jour avec succès");
+  };
 
   return (
-    <div className="space-y-6">
-      <Alert variant="default" className="bg-yellow-50 text-yellow-800 border border-yellow-200">
-        <AlertTriangle className="h-4 w-4" />
-        <AlertDescription>
-          La sécurité de votre compte est importante. Nous vous recommandons d'activer l'authentification à deux facteurs et de vérifier régulièrement les activités de connexion.
-        </AlertDescription>
-      </Alert>
-      
-      <SecurityScanSection user={user} />
-      <TwoFactorSection user={user} />
-      <PasswordSection user={user} />
-      <DevicesSection />
-      <LoginHistorySection user={user} />
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Sécurité du compte</CardTitle>
+        <CardDescription>Gérez les paramètres de sécurité de votre compte</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="current-password">Mot de passe actuel</Label>
+          <Input id="current-password" type="password" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="new-password">Nouveau mot de passe</Label>
+          <Input id="new-password" type="password" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
+          <Input id="confirm-password" type="password" />
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button onClick={updatePassword}>
+          <Lock className="h-4 w-4 mr-2" />
+          Mettre à jour le mot de passe
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };

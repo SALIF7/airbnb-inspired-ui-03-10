@@ -2,11 +2,9 @@
 import { useState, useEffect } from 'react';
 import { useJobs } from '@/hooks/useJobs';
 import { Job } from '@/types/job';
-import { useQueryClient } from '@tanstack/react-query';
 
 export const useJobManagement = () => {
-  const queryClient = useQueryClient();
-  const { jobs, isLoading: isLoadingJobs, addJob, updateJob, deleteJob, refetch } = useJobs();
+  const { jobs, isLoading: isLoadingJobs, addJob, updateJob, deleteJob } = useJobs();
   
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [filteredJobs, setFilteredJobs] = useState<Job[]>([]);
@@ -39,17 +37,11 @@ export const useJobManagement = () => {
     }
   }, [jobs, searchTerm, showExpired, domainFilter]);
 
-  const refetchJobs = () => {
-    refetch();
-  };
-
   const handleSaveJob = async (formData: Omit<Job, "id">) => {
     try {
       await addJob.mutateAsync(formData);
       setIsJobDialogOpen(false);
-      refetchJobs();
     } catch (error) {
-      console.error('Error saving job:', error);
       throw error;
     }
   };
@@ -67,9 +59,7 @@ export const useJobManagement = () => {
         setSelectedJob(null);
         setIsEditing(false);
         setIsJobDialogOpen(false);
-        refetchJobs();
       } catch (error) {
-        console.error('Error updating job:', error);
         throw error;
       }
     }
@@ -79,7 +69,6 @@ export const useJobManagement = () => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer cette offre d'emploi ?")) {
       try {
         await deleteJob.mutateAsync(jobId);
-        refetchJobs();
       } catch (error) {
         console.error('Error deleting job:', error);
       }
@@ -104,7 +93,6 @@ export const useJobManagement = () => {
     isLoadingJobs,
     selectedJob,
     isJobDialogOpen,
-    setIsJobDialogOpen,
     isEditing,
     searchTerm,
     setSearchTerm,
@@ -117,7 +105,6 @@ export const useJobManagement = () => {
     handleUpdateJob,
     handleDeleteJob,
     handleCreateJob,
-    handleCancelJob,
-    refetchJobs
+    handleCancelJob
   };
 };

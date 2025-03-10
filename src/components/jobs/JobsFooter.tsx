@@ -1,13 +1,6 @@
 
 import React from 'react';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
-import { FooterBranding } from '../home/footer/FooterLogo';
-import { FooterServices } from '../home/footer/FooterServices';
-import { FooterLinks } from '../home/footer/FooterLinks';
-import { FooterContact } from '../home/footer/FooterContact';
-import { FooterCopyright } from '../home/footer/FooterCopyright';
-import { containerVariants, itemVariants } from '../home/footer/footerAnimations';
-import { motion } from 'framer-motion';
 
 export const JobsFooter = () => {
   const { settings } = useSiteSettings();
@@ -15,14 +8,9 @@ export const JobsFooter = () => {
   return (
     <footer className="bg-sholom-dark text-white py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.3 }}
-        >
-          <motion.div variants={itemVariants} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Logo et informations de l'entreprise */}
+          <div className="space-y-4">
             <img 
               src={settings.logo || "/placeholder.svg"} 
               alt={settings.siteName} 
@@ -33,9 +21,10 @@ export const JobsFooter = () => {
             />
             <h3 className="text-xl font-bold">{settings.siteName}</h3>
             <p className="text-gray-400 text-sm">{settings.footer.about}</p>
-          </motion.div>
+          </div>
           
-          <motion.div variants={itemVariants}>
+          {/* Contact */}
+          <div>
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
             <div className="text-gray-400 space-y-2">
               <p>{settings.footer.contact}</p>
@@ -47,28 +36,22 @@ export const JobsFooter = () => {
                 </>
               )}
             </div>
-          </motion.div>
+          </div>
           
-          <motion.div variants={itemVariants}>
+          {/* Informations légales */}
+          <div>
             <h4 className="text-lg font-semibold mb-4">Informations légales</h4>
             <div className="text-gray-400 space-y-2">
-              <p>
-                <a href="/terms" className="hover:text-white transition-colors">
-                  {settings.footer.terms}
-                </a>
-              </p>
-              <p>
-                <a href="/privacy" className="hover:text-white transition-colors">
-                  {settings.footer.policy}
-                </a>
-              </p>
+              <p>{settings.footer.terms}</p>
+              <p>{settings.footer.policy}</p>
               {settings.companyInfo && (
                 <p>RCCM: {settings.companyInfo.registrationNumber}</p>
               )}
             </div>
-          </motion.div>
+          </div>
           
-          <motion.div variants={itemVariants}>
+          {/* Réseaux sociaux */}
+          <div>
             <h4 className="text-lg font-semibold mb-4">Suivez-nous</h4>
             <div className="flex space-x-4">
               <a href={settings.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
@@ -92,8 +75,8 @@ export const JobsFooter = () => {
                 </svg>
               </a>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
         
         <div className="mt-10 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
           <p>&copy; {new Date().getFullYear()} {settings.siteName}. Tous droits réservés.</p>

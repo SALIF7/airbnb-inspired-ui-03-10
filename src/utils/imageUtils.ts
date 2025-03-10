@@ -12,33 +12,50 @@ const UNSPLASH_FALLBACKS = [
 ];
 
 /**
- * Cette fonction PRÉSERVE STRICTEMENT l'URL d'image fournie
- * et n'utilise une image de secours QUE si l'URL est complètement vide ou undefined
+ * Obtenir une URL d'image valide à partir d'une URL
+ * Gère les cas d'erreur avec des images de secours
  */
 export const getValidImageUrl = (imageUrl: string, index: number = 0): string => {
-  // JAMAIS remplacer une URL d'image existante, quelle qu'elle soit
-  if (imageUrl && imageUrl.trim() !== '') {
-    console.log(`URL d'image STRICTEMENT préservée: ${imageUrl}`);
+  // Si pas d'URL, utiliser une image de secours
+  if (!imageUrl || imageUrl === 'undefined' || imageUrl === 'null') {
+    console.log("URL d'image manquante, utilisation d'une image de secours");
+    return UNSPLASH_FALLBACKS[index % UNSPLASH_FALLBACKS.length];
+  }
+  
+  // Traitement des URLs blob
+  if (imageUrl.startsWith('blob:')) {
+    console.log("Conversion d'une URL blob en fallback:", imageUrl);
+    return UNSPLASH_FALLBACKS[index % UNSPLASH_FALLBACKS.length];
+  }
+  
+  // URLs HTTP(S) sont valides
+  if (imageUrl.startsWith('http')) {
     return imageUrl;
   }
   
-  // Ne remplacer que si l'URL est complètement vide
-  console.log(`URL d'image vide, utilisation de secours à l'index ${index}`);
+  // Chemins locaux valides
+  if (imageUrl.startsWith('/')) {
+    if (imageUrl === '/placeholder.svg' || imageUrl.includes('lovable-uploads')) {
+      return imageUrl;
+    }
+    // Autres chemins locaux peuvent être invalides
+    console.log("Chemin local potentiellement invalide:", imageUrl);
+  }
+  
+  // Par défaut, utiliser une image de secours
+  console.log("Utilisation d'une image de secours pour:", imageUrl);
   return UNSPLASH_FALLBACKS[index % UNSPLASH_FALLBACKS.length];
 };
 
 /**
- * Normalise un tableau d'images en préservant STRICTEMENT les URLs fournies
+ * Normalise un tableau d'images en remplaçant les URLs invalides
  */
 export const normalizeImages = (images: string[] | undefined): string[] => {
   if (!images || images.length === 0) {
-    console.log("Aucune image fournie, utilisation d'une image par défaut");
     return [getRandomFallbackImage()];
   }
   
-  // CRITIQUE: Retourner exactement les mêmes images sans aucune modification
-  console.log(`Préservation STRICTE des ${images.length} images d'origine:`, images);
-  return [...images];
+  return images.map((img, index) => getValidImageUrl(img, index));
 };
 
 // Re-export the image utility functions from the new location
@@ -48,11 +65,10 @@ export { compressImage, cleanupImageUrls };
  * Obtenir une image d'avatar valide pour les propriétaires
  */
 export const getHostAvatar = (avatarUrl: string | undefined): string => {
-  if (!avatarUrl) {
+  if (!avatarUrl || avatarUrl.startsWith('blob:')) {
     return "/placeholder.svg";
   }
   
-  // Préserver les URLs blob et HTTP
   return avatarUrl;
 };
 
@@ -68,14 +84,8 @@ export const getRandomFallbackImage = (): string => {
  */
 export const isImageValid = (url: string): Promise<boolean> => {
   return new Promise((resolve) => {
-    if (!url) {
+    if (!url || url.startsWith('blob:')) {
       resolve(false);
-      return;
-    }
-    
-    // Les URLs blob sont considérées comme valides
-    if (url.startsWith('blob:')) {
-      resolve(true);
       return;
     }
     

@@ -2,14 +2,11 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cva } from 'class-variance-authority';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface OnlineStatusIndicatorProps {
   isOnline: boolean;
   showLabel?: boolean;
   size?: 'sm' | 'md' | 'lg';
-  lastActive?: Date;
-  showTooltip?: boolean;
 }
 
 const indicatorStyles = cva(
@@ -33,30 +30,12 @@ const indicatorStyles = cva(
   }
 );
 
-// Fonction pour formater le temps écoulé depuis la dernière activité
-const getLastActiveText = (lastActive?: Date): string => {
-  if (!lastActive) return "Dernière activité inconnue";
-  
-  const now = new Date();
-  const diffMs = now.getTime() - lastActive.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMins / 60);
-  const diffDays = Math.floor(diffHours / 24);
-  
-  if (diffMins < 1) return "Actif à l'instant";
-  if (diffMins < 60) return `Actif il y a ${diffMins} min`;
-  if (diffHours < 24) return `Actif il y a ${diffHours} h`;
-  return `Actif il y a ${diffDays} j`;
-};
-
 export const OnlineStatusIndicator: React.FC<OnlineStatusIndicatorProps> = ({ 
   isOnline, 
   showLabel = false,
-  size = 'md',
-  lastActive,
-  showTooltip = false
+  size = 'md'
 }) => {
-  const indicator = (
+  return (
     <div className="flex items-center gap-1.5">
       <span 
         className={indicatorStyles({ 
@@ -67,34 +46,16 @@ export const OnlineStatusIndicator: React.FC<OnlineStatusIndicatorProps> = ({
       
       {showLabel && (
         <span className="text-xs">
-          {isOnline ? 'En ligne' : lastActive ? getLastActiveText(lastActive) : 'Hors ligne'}
+          {isOnline ? 'En ligne' : 'Hors ligne'}
         </span>
       )}
     </div>
   );
-  
-  if (showTooltip) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            {indicator}
-          </TooltipTrigger>
-          <TooltipContent>
-            {isOnline ? 'En ligne' : lastActive ? getLastActiveText(lastActive) : 'Hors ligne'}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
-  
-  return indicator;
 };
 
 export const OnlineStatusBadge: React.FC<Omit<OnlineStatusIndicatorProps, 'size'>> = ({
   isOnline,
-  showLabel = true,
-  lastActive
+  showLabel = true
 }) => {
   return (
     <Badge 
@@ -106,9 +67,7 @@ export const OnlineStatusBadge: React.FC<Omit<OnlineStatusIndicatorProps, 'size'
           className={`w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-gray-400'}`}
         />
         {showLabel && (
-          <span>
-            {isOnline ? 'En ligne' : lastActive ? getLastActiveText(lastActive) : 'Hors ligne'}
-          </span>
+          <span>{isOnline ? 'En ligne' : 'Hors ligne'}</span>
         )}
       </div>
     </Badge>

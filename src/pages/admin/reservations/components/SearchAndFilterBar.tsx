@@ -69,15 +69,15 @@ const SearchAndFilterBar: React.FC<SearchAndFilterBarProps> = ({
               {type === 'reservations' ? (
                 <>
                   <SelectItem value="pending">En attente</SelectItem>
-                  <SelectItem value="confirmed">Confirmé</SelectItem>
-                  <SelectItem value="cancelled">Annulé</SelectItem>
+                  <SelectItem value="confirmed">Confirmée</SelectItem>
+                  <SelectItem value="cancelled">Annulée</SelectItem>
                   <SelectItem value="completed">Terminée</SelectItem>
                 </>
               ) : (
                 <>
                   <SelectItem value="pending">En attente</SelectItem>
-                  <SelectItem value="approved">Approuvé</SelectItem>
-                  <SelectItem value="rejected">Rejeté</SelectItem>
+                  <SelectItem value="approved">Acceptée</SelectItem>
+                  <SelectItem value="rejected">Refusée</SelectItem>
                 </>
               )}
             </SelectContent>

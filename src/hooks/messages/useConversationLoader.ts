@@ -1,146 +1,128 @@
 
 import { useState, useEffect } from 'react';
-import { Conversation, Message } from '@/components/messages/types';
-import useLocalStorage from '../useLocalStorage';
+import { Conversation, Message, ADMIN_USER, WELCOME_BOT } from '@/components/messages/types';
 
-const useConversationLoader = (userId: string | undefined) => {
+export const useConversationLoader = (userId: string | undefined) => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
 
-  // Load conversations from localStorage when the component mounts
+  // Load conversations from localStorage
   useEffect(() => {
-    if (!userId) {
-      setConversations([]);
-      setSelectedConversation(null);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
-      // Load conversations from localStorage
-      const storedConversations = localStorage.getItem(`conversations_${userId}`);
+    if (userId) {
+      const savedConversations = localStorage.getItem(`conversations_${userId}`);
       
-      if (storedConversations) {
-        // Parse the JSON string and handle date conversion
-        const parsedConversations = JSON.parse(storedConversations, (key, value) => {
-          if (key === 'timestamp' && typeof value === 'string') {
-            return new Date(value);
+      if (savedConversations) {
+        try {
+          // Convert date strings to Date objects
+          const parsedConversations = JSON.parse(savedConversations, (key, value) => {
+            if (key === 'timestamp' && typeof value === 'string') {
+              return new Date(value);
+            }
+            return value;
+          });
+          
+          setConversations(parsedConversations);
+          
+          // Retrieve selected conversation from session storage if available
+          const lastSelectedId = sessionStorage.getItem(`selected_conversation_${userId}`);
+          
+          if (lastSelectedId) {
+            const lastSelected = parsedConversations.find(c => c.id === lastSelectedId);
+            if (lastSelected) {
+              setSelectedConversation(lastSelected);
+            } else if (parsedConversations.length > 0) {
+              setSelectedConversation(parsedConversations[0]);
+              sessionStorage.setItem(`selected_conversation_${userId}`, parsedConversations[0].id);
+            }
+          } else if (parsedConversations.length > 0) {
+            setSelectedConversation(parsedConversations[0]);
+            sessionStorage.setItem(`selected_conversation_${userId}`, parsedConversations[0].id);
           }
-          return value;
-        });
-        
-        setConversations(parsedConversations);
-        
-        // Select the first conversation if available and none is selected
-        if (parsedConversations.length > 0 && !selectedConversation) {
-          setSelectedConversation(parsedConversations[0]);
+        } catch (error) {
+          console.error("Erreur lors de la lecture des conversations:", error);
+          initializeDefaultConversations(userId);
         }
+      } else {
+        // No conversations found, initialize with default conversations
+        initializeDefaultConversations(userId);
       }
-      setIsLoading(false);
-    } catch (err) {
-      console.error('Error loading conversations:', err);
-      setError(err instanceof Error ? err : new Error('Unknown error loading conversations'));
-      setIsLoading(false);
     }
   }, [userId]);
 
-  // Get unread count for a conversation
-  const getUnreadCount = (conversation: Conversation): number => {
-    return conversation.messages.filter(msg => !msg.read && msg.sender !== 'user').length;
-  };
+  // Save conversations to localStorage when they change
+  useEffect(() => {
+    if (userId && conversations.length > 0) {
+      localStorage.setItem(`conversations_${userId}`, JSON.stringify(conversations));
+    }
+  }, [conversations, userId]);
+  
+  // Remember selected conversation
+  useEffect(() => {
+    if (userId && selectedConversation) {
+      sessionStorage.setItem(`selected_conversation_${userId}`, selectedConversation.id);
+    }
+  }, [selectedConversation, userId]);
 
-  // Mark a conversation as read
-  const markConversationAsRead = (conversationId: string) => {
+  // Initialize default conversations for a new user
+  const initializeDefaultConversations = (userId: string) => {
     if (!userId) return;
 
-    const updatedConversations = conversations.map(conv => {
-      if (conv.id === conversationId) {
-        // Mark all messages as read
-        const updatedMessages = conv.messages.map(msg => ({
-          ...msg,
-          read: true
-        }));
-        
-        return {
-          ...conv,
-          messages: updatedMessages,
-          lastMessage: {
-            ...conv.lastMessage,
-            read: true
-          }
-        };
-      }
-      return conv;
-    });
+    // Create welcome conversation with bot
+    const welcomeMessage: Message = {
+      id: `welcome-${Date.now()}`,
+      content: `Bienvenue ${userId} sur SHALOM JOB CENTER ! Nous sommes ravis de vous accueillir. N'hésitez pas à parcourir les offres d'emploi et les logements disponibles. Si vous avez des questions, contactez notre équipe d'assistance.`,
+      timestamp: new Date(),
+      read: false,
+      sender: 'system',
+    };
 
-    setConversations(updatedConversations);
-    
-    // Update in localStorage
-    localStorage.setItem(`conversations_${userId}`, JSON.stringify(updatedConversations));
-    
-    // Update selected conversation if it's the one being marked as read
-    if (selectedConversation && selectedConversation.id === conversationId) {
-      const updatedSelectedConv = updatedConversations.find(
-        conv => conv.id === conversationId
-      );
-      if (updatedSelectedConv) {
-        setSelectedConversation(updatedSelectedConv);
-      }
-    }
-  };
+    // Create conversation with admin
+    const adminWelcomeMessage: Message = {
+      id: `admin-welcome-${Date.now()}`,
+      content: `Bonjour ${userId}, je suis l'administrateur de la plateforme. N'hésitez pas à me contacter si vous avez des questions.`,
+      timestamp: new Date(),
+      read: false,
+      sender: 'admin',
+    };
 
-  // Update a conversation with a new message
-  const updateConversationWithMessage = (
-    conversationId: string,
-    newMessage: Message
-  ) => {
-    if (!userId) return;
-
-    const updatedConversations = conversations.map(conv => {
-      if (conv.id === conversationId) {
-        return {
-          ...conv,
-          messages: [...conv.messages, newMessage],
-          lastMessage: {
-            content: newMessage.content,
-            timestamp: newMessage.timestamp,
-            read: newMessage.read,
-            sender: newMessage.sender
-          }
-        };
+    const initialConversations: Conversation[] = [
+      {
+        id: `welcome-${Date.now()}`,
+        with: WELCOME_BOT,
+        lastMessage: {
+          content: welcomeMessage.content,
+          timestamp: welcomeMessage.timestamp,
+          read: welcomeMessage.read,
+          sender: 'system',
+        },
+        messages: [welcomeMessage],
+      },
+      {
+        id: `admin-${Date.now()}`,
+        with: ADMIN_USER,
+        lastMessage: {
+          content: adminWelcomeMessage.content,
+          timestamp: adminWelcomeMessage.timestamp,
+          read: adminWelcomeMessage.read,
+          sender: 'admin',
+        },
+        messages: [adminWelcomeMessage],
       }
-      return conv;
-    });
+    ];
 
-    setConversations(updatedConversations);
+    setConversations(initialConversations);
+    setSelectedConversation(initialConversations[0]);
     
-    // Update in localStorage
-    localStorage.setItem(`conversations_${userId}`, JSON.stringify(updatedConversations));
-    
-    // Update selected conversation if it's the one being updated
-    if (selectedConversation && selectedConversation.id === conversationId) {
-      const updatedSelectedConv = updatedConversations.find(
-        conv => conv.id === conversationId
-      );
-      if (updatedSelectedConv) {
-        setSelectedConversation(updatedSelectedConv);
-      }
-    }
+    // Save to localStorage immediately
+    localStorage.setItem(`conversations_${userId}`, JSON.stringify(initialConversations));
+    sessionStorage.setItem(`selected_conversation_${userId}`, initialConversations[0].id);
   };
 
   return {
-    isLoading,
-    error,
     conversations,
     setConversations,
     selectedConversation,
     setSelectedConversation,
-    getUnreadCount,
-    markConversationAsRead,
-    updateConversationWithMessage
+    initializeDefaultConversations
   };
 };
-
-export default useConversationLoader;

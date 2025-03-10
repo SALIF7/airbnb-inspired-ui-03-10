@@ -2,7 +2,6 @@
 import React from "react";
 import { Navbar } from "@/components/Navbar";
 import { useListingDetail } from "@/components/listing-detail/hooks/useListingDetail";
-import { ScrollAnimation } from "@/components/ui/scroll-animation";
 
 // Imported components
 import ListingNotFound from "@/components/listing-detail/ListingNotFound";
@@ -61,32 +60,30 @@ const ListingDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <ScrollAnimation direction="up" duration={0.7} once={true}>
-        <ListingDetailContainer
-          listing={listing}
-          processedImages={processedImages}
-          listings={listings}
-          averageRating={averageRating}
-          listingReviews={listingReviews}
-          startDate={startDate}
-          setStartDate={setStartDate}
-          endDate={endDate}
-          setEndDate={setEndDate}
-          guestCount={guestCount}
-          setGuestCount={setGuestCount}
-          handleReservation={handleReservation}
-          isFavorite={isFavorite}
-          toggleFavorite={toggleFavorite}
-          primaryColor={primaryColor}
-          reviewText={reviewText}
-          setReviewText={setReviewText}
-          reviewRating={reviewRating}
-          setReviewRating={setReviewRating}
-          isAuthenticated={isAuthenticated}
-          handleSubmitReview={handleSubmitReview}
-          formatPriceFCFA={formatPriceFCFA}
-        />
-      </ScrollAnimation>
+      <ListingDetailContainer
+        listing={listing}
+        processedImages={processedImages}
+        listings={listings}
+        averageRating={averageRating}
+        listingReviews={listingReviews}
+        startDate={startDate}
+        setStartDate={setStartDate}
+        endDate={endDate}
+        setEndDate={setEndDate}
+        guestCount={guestCount}
+        setGuestCount={setGuestCount}
+        handleReservation={handleReservation}
+        isFavorite={isFavorite}
+        toggleFavorite={toggleFavorite}
+        primaryColor={primaryColor}
+        reviewText={reviewText}
+        setReviewText={setReviewText}
+        reviewRating={reviewRating}
+        setReviewRating={setReviewRating}
+        isAuthenticated={isAuthenticated}
+        handleSubmitReview={handleSubmitReview}
+        formatPriceFCFA={formatPriceFCFA}
+      />
     </div>
   );
 };

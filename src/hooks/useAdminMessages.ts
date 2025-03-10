@@ -1,11 +1,10 @@
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Conversation } from '@/components/messages/types';
 import { 
   loadAdminConversations, 
   getUnreadCount, 
-  getTotalUnreadCount,
-  saveAdminConversations
+  getTotalUnreadCount 
 } from '@/utils/adminMessageUtils';
 import { useAdminConversationActions } from './useAdminConversationActions';
 
@@ -15,82 +14,41 @@ export const useAdminMessages = () => {
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState<'all' | 'unread' | 'important'>('all');
-  const [sendingMessage, setSendingMessage] = useState(false);
   
-  // Fonction pour charger et actualiser les conversations
-  const loadAndRefreshConversations = useCallback(() => {
-    const allUserConversations = loadAdminConversations();
-    console.log('Admin conversations refreshed:', allUserConversations.length);
-    
-    setConversations(allUserConversations);
-    
-    if (allUserConversations.length > 0 && !selectedConversation) {
-      setSelectedConversation(allUserConversations[0]);
-    } else if (selectedConversation) {
-      // Si une conversation est déjà sélectionnée, mettre à jour ses données
-      const updatedSelectedConv = allUserConversations.find(
-        conv => conv.id === selectedConversation.id
-      );
-      if (updatedSelectedConv) {
-        setSelectedConversation(updatedSelectedConv);
+  // Charger les conversations depuis le localStorage
+  useEffect(() => {
+    const loadAndRefreshConversations = () => {
+      const allUserConversations = loadAdminConversations();
+      setConversations(allUserConversations);
+      
+      if (allUserConversations.length > 0 && !selectedConversation) {
+        setSelectedConversation(allUserConversations[0]);
+      } else if (selectedConversation) {
+        // Si une conversation est déjà sélectionnée, mettre à jour ses données
+        const updatedSelectedConv = allUserConversations.find(
+          conv => conv.id === selectedConversation.id
+        );
+        if (updatedSelectedConv) {
+          setSelectedConversation(updatedSelectedConv);
+        }
       }
-    }
-  }, [selectedConversation]);
-  
-  // Sauvegarder les conversations à chaque modification
-  useEffect(() => {
-    if (conversations.length > 0) {
-      saveAdminConversations(conversations);
-    }
-  }, [conversations]);
-  
-  // Charger les conversations au démarrage
-  useEffect(() => {
+    };
+    
+    // Charger les conversations au démarrage
     loadAndRefreshConversations();
     
-    // Configurer un intervalle pour vérifier périodiquement les nouveaux messages (plus fréquent)
+    // Configurer un intervalle pour vérifier périodiquement les nouveaux messages
     const interval = setInterval(() => {
       loadAndRefreshConversations();
-    }, 3000); // Vérifier toutes les 3 secondes pour une mise à jour plus réactive
+    }, 10000); // Vérifier toutes les 10 secondes
     
-    // Écouter l'événement personnalisé pour les mises à jour de messages admin
-    const handleAdminMessagesUpdated = () => {
-      console.log('Admin messages updated event received');
-      loadAndRefreshConversations();
-    };
-    
-    // Écouter les changements de localStorage
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key && (e.key.startsWith('conversations_') || e.key === 'admin_conversations')) {
-        console.log('Storage change detected:', e.key);
-        loadAndRefreshConversations();
-      }
-    };
-    
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('admin-messages-updated', handleAdminMessagesUpdated);
-    
-    // Créer un canal pour la communication entre les onglets
-    const channel = new BroadcastChannel('admin-messaging-channel');
-    channel.onmessage = (event) => {
-      if (event.data.type === 'refresh-conversations') {
-        console.log('Broadcast message received to refresh conversations');
-        loadAndRefreshConversations();
-      }
-    };
-    
-    return () => {
-      clearInterval(interval);
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('admin-messages-updated', handleAdminMessagesUpdated);
-      channel.close();
-    };
-  }, [loadAndRefreshConversations]);
+    return () => clearInterval(interval);
+  }, [selectedConversation]);
 
   const { 
     handleSendMessage, 
     handleSelectConversation,
-    sendingMessage: sendingMsg 
+    sendingMessage 
   } = useAdminConversationActions(
     conversations,
     setConversations,
@@ -99,11 +57,6 @@ export const useAdminMessages = () => {
     newMessage,
     setNewMessage
   );
-
-  // Mettre à jour l'état d'envoi
-  useEffect(() => {
-    setSendingMessage(sendingMsg);
-  }, [sendingMsg]);
 
   // Compter le total des messages non lus
   const totalUnreadCount = getTotalUnreadCount(conversations);
@@ -121,7 +74,6 @@ export const useAdminMessages = () => {
     setFilter,
     handleSendMessage,
     handleSelectConversation,
-    getUnreadCount,
-    refreshConversations: loadAndRefreshConversations
+    getUnreadCount
   };
 };

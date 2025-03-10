@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarIcon } from 'lucide-react';
-import { useLanguage } from '@/hooks/language';
+import { useLanguage } from '@/hooks/useLanguage';
 import { useNavigate } from 'react-router-dom';
 
 interface EmptyStateProps {

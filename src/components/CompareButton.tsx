@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { GitCompare } from 'lucide-react';
+import { Scale } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
@@ -84,7 +84,7 @@ export const CompareButton = ({ listingId }: CompareButtonProps) => {
       onClick={toggleCompare}
       title={isComparing ? "Retirer de la comparaison" : "Ajouter à la comparaison"}
     >
-      <GitCompare className="h-5 w-5" />
+      <Scale className="h-5 w-5" />
     </motion.button>
   );
 };

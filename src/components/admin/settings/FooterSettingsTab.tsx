@@ -2,9 +2,8 @@
 import React from 'react';
 import { SiteSettings } from '@/types/siteSettings';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
-import { FooterFields } from './footer/FooterFields';
-import { Button } from '@/components/ui/button';
-import { InfoIcon } from 'lucide-react';
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface FooterSettingsTabProps {
   settings: SiteSettings;
@@ -16,31 +15,43 @@ export const FooterSettingsTab: React.FC<FooterSettingsTabProps> = ({
   handleFooterChange
 }) => {
   return (
-    <Card className="shadow-md border-0">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-        <div className="flex items-center gap-2">
-          <CardTitle>Paramètres du pied de page</CardTitle>
-          <InfoIcon size={16} className="text-blue-200" />
-        </div>
-        <CardDescription className="text-blue-100">
-          Modifiez le contenu du pied de page de votre site pour améliorer l'expérience utilisateur et respecter les obligations légales.
-        </CardDescription>
+    <Card>
+      <CardHeader>
+        <CardTitle>Paramètres du pied de page</CardTitle>
+        <CardDescription>Modifiez le contenu du pied de page de votre site.</CardDescription>
       </CardHeader>
-      <CardContent className="pt-6">
-        <FooterFields 
-          settings={settings.footer} 
-          onFieldChange={handleFooterChange}
-        />
-        
-        <div className="mt-6 flex justify-end">
-          <Button 
-            variant="outline" 
-            size="sm"
-            className="text-xs text-gray-500"
-            onClick={() => window.open('/home', '_blank')}
-          >
-            Prévisualiser
-          </Button>
+      <CardContent className="grid gap-4">
+        <div>
+          <Label htmlFor="contact">Contact</Label>
+          <Textarea
+            id="contact"
+            defaultValue={settings.footer.contact}
+            onChange={(e) => handleFooterChange('contact', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="about">À propos</Label>
+          <Textarea
+            id="about"
+            defaultValue={settings.footer.about}
+            onChange={(e) => handleFooterChange('about', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="terms">Conditions d'utilisation</Label>
+          <Textarea
+            id="terms"
+            defaultValue={settings.footer.terms}
+            onChange={(e) => handleFooterChange('terms', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="policy">Politique de confidentialité</Label>
+          <Textarea
+            id="policy"
+            defaultValue={settings.footer.policy}
+            onChange={(e) => handleFooterChange('policy', e.target.value)}
+          />
         </div>
       </CardContent>
     </Card>

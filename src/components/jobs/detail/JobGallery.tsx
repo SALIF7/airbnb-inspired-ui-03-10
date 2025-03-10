@@ -1,74 +1,50 @@
 
-import React from 'react';
-import { Job } from '@/types/job';
-import { GalleryControls } from './gallery/GalleryControls';
-import { ThumbnailStrip } from './gallery/ThumbnailStrip';
-import { GalleryImage } from './gallery/GalleryImage';
-import { EmptyGalleryState } from './gallery/EmptyGalleryState';
-import { useGallery } from './gallery/useGallery';
+import React, { useState } from 'react';
+import { getValidImageUrl } from '@/utils/imageUtils';
 
 interface JobGalleryProps {
-  job: Job;
-  className?: string;
+  images: string[];
+  title: string;
+  domain: string;
+  getDomainImage: (domain: string) => string;
 }
 
-export const JobGallery: React.FC<JobGalleryProps> = ({ job, className }) => {
-  const {
-    currentIndex,
-    setCurrentIndex,
-    isFullScreen,
-    isLoading,
-    setIsLoading,
-    galleryImages,
-    hasError,
-    domain,
-    handlePrevious,
-    handleNext,
-    toggleFullScreen,
-    handleImageLoad,
-    handleImageError
-  } = useGallery(job);
+const JobGallery = ({ images, title, domain, getDomainImage }: JobGalleryProps) => {
+  if (!images || images.length === 0) return null;
 
-  if (galleryImages.length === 0) {
-    return <EmptyGalleryState className={className} />;
-  }
+  // State for tracking image load errors
+  const [failedImages, setFailedImages] = useState<Record<number, boolean>>({});
+
+  // Handle image load error
+  const handleImageError = (index: number) => {
+    setFailedImages(prev => ({ ...prev, [index]: true }));
+  };
+
+  // Get appropriate image source
+  const getImageSrc = (img: string, index: number) => {
+    if (failedImages[index]) {
+      return getDomainImage(domain);
+    }
+    return getValidImageUrl(img, index);
+  };
 
   return (
-    <div 
-      className={`${className} relative overflow-hidden rounded-xl ${
-        isFullScreen ? 'fixed inset-0 z-50 bg-black' : ''
-      }`}
-    >
-      {/* Main Gallery Image */}
-      <GalleryImage 
-        src={galleryImages[currentIndex]}
-        alt={`Image ${currentIndex + 1}`}
-        isFullScreen={isFullScreen}
-        isLoading={isLoading}
-        onLoad={handleImageLoad}
-        onError={() => handleImageError(currentIndex)}
-        hasError={hasError}
-        domain={domain}
-      />
-
-      {/* Navigation and Control Elements */}
-      <GalleryControls 
-        isFullScreen={isFullScreen}
-        handlePrevious={handlePrevious}
-        handleNext={handleNext}
-        toggleFullScreen={toggleFullScreen}
-        totalImages={galleryImages.length}
-        currentIndex={currentIndex}
-      />
-
-      {/* Thumbnail Strip */}
-      <ThumbnailStrip 
-        images={galleryImages}
-        currentIndex={currentIndex}
-        setCurrentIndex={setCurrentIndex}
-        setIsLoading={setIsLoading}
-        domain={job.domain}
-      />
+    <div className="mb-8">
+      <h3 className="text-xl font-bold mb-4 text-sholom-dark">Galerie</h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {images.map((img, index) => (
+          <div key={index} className="rounded-lg overflow-hidden aspect-square">
+            <img 
+              src={getImageSrc(img, index)}
+              alt={`${title} - Image ${index + 1}`}
+              onError={() => handleImageError(index)}
+              className="w-full h-full object-cover hover-scale transition-transform cursor-pointer"
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
+
+export default JobGallery;

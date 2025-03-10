@@ -2,12 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import { ImageUploadField } from '../ImageUploadField';
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 
 interface FaviconSectionProps {
   faviconUrl: string;
   faviconUploading: boolean;
-  handleFaviconUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFaviconUpload: (file: File) => void;
 }
 
 export const FaviconSection: React.FC<FaviconSectionProps> = ({
@@ -51,19 +50,13 @@ export const FaviconSection: React.FC<FaviconSectionProps> = ({
             <div className="animate-pulse bg-gray-200 h-8 w-8 rounded-lg"></div>
           )}
         </div>
-        <div className="relative">
-          <Button variant="outline" className="relative" disabled={faviconUploading}>
-            {faviconUploading ? "Chargement..." : "Choisir une image"}
-            <input
-              type="file"
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              onChange={handleFaviconUpload}
-              accept="image/*"
-              disabled={faviconUploading}
-            />
-          </Button>
-        </div>
+        <ImageUploadField
+          label=""
+          imageUrl={faviconUrl}
+          onUpload={handleFaviconUpload}
+          isUploading={faviconUploading}
+        />
       </div>
     </div>
   );
-}
+};

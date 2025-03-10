@@ -1,10 +1,9 @@
 
 const useLocalStorage = () => {
-  const loadData = <T>(key: string, defaultData: T): T => {
+  const loadData = <T>(key: string, defaultData: T[]): T[] => {
     try {
       const savedData = localStorage.getItem(key);
       if (savedData) {
-        console.log(`Données chargées pour ${key}:`, JSON.parse(savedData));
         return JSON.parse(savedData);
       }
       // Save default data immediately to ensure it's available on refresh
@@ -17,7 +16,7 @@ const useLocalStorage = () => {
     }
   };
 
-  const saveData = <T>(key: string, data: T): boolean => {
+  const saveData = <T>(key: string, data: T[]): boolean => {
     try {
       localStorage.setItem(key, JSON.stringify(data));
       console.log(`Données sauvegardées pour ${key}:`, data);
@@ -32,14 +31,7 @@ const useLocalStorage = () => {
   const getItem = <T>(key: string, defaultValue: T): T => {
     try {
       const item = localStorage.getItem(key);
-      if (item) {
-        console.log(`Item chargé pour ${key}:`, JSON.parse(item));
-        return JSON.parse(item);
-      }
-      // Save default value if not found
-      localStorage.setItem(key, JSON.stringify(defaultValue));
-      console.log(`Valeur par défaut enregistrée pour ${key}:`, defaultValue);
-      return defaultValue;
+      return item ? JSON.parse(item) : defaultValue;
     } catch (error) {
       console.error(`Erreur lors de la récupération de ${key}:`, error);
       return defaultValue;

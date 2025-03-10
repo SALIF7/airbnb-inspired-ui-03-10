@@ -1,48 +1,71 @@
 
-/* Message Bubbles */
+/* Message styling */
 .whatsapp-message {
   position: relative;
+  max-width: 65%;
   padding: 8px 12px;
-  border-radius: 8px;
-  margin-bottom: 2px;
+  border-radius: 7.5px;
+  margin: 1px 0;
   box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
-  line-height: 1.4;
   word-wrap: break-word;
-  max-width: 70%;
+  display: inline-block;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #303030; /* Changed from white to dark gray for better readability */
 }
 
+/* User messages (sent by the current user) */
 .whatsapp-user-message {
-  background-color: var(--whatsapp-bubble-me);
+  background-color: #dcf8c6;
+  align-self: flex-end;
   margin-left: auto;
   border-top-right-radius: 0;
+  text-align: left; /* Ensure text alignment is correct */
+  direction: ltr; /* Ensure text direction is correct */
 }
 
+/* Other messages (received from other users) */
 .whatsapp-other-message {
-  background-color: var(--whatsapp-bubble-other);
+  background-color: white;
+  align-self: flex-start;
   margin-right: auto;
   border-top-left-radius: 0;
+  text-align: left; /* Ensure text alignment is correct */
+  direction: ltr; /* Ensure text direction is correct */
 }
 
+/* Message time and status indicators */
 .whatsapp-message-time {
-  font-size: 11px;
-  color: var(--whatsapp-message-timestamp);
+  font-size: 0.7rem;
+  color: #8c8c8c;
   text-align: right;
-  margin-top: 2px;
+  margin-top: 3px;
   display: flex;
-  align-items: center;
   justify-content: flex-end;
+  align-items: center;
+  gap: 2px;
 }
 
-/* Message Tails */
+/* Message tails */
 .whatsapp-tail-out {
   position: absolute;
   top: 0;
   right: -8px;
   width: 8px;
   height: 13px;
-  background-color: var(--whatsapp-bubble-me);
-  clip-path: polygon(0 0, 100% 100%, 0 100%);
-  transform: rotate(90deg);
+  background-color: #dcf8c6;
+  border-bottom-left-radius: 16px 14px;
+}
+
+.whatsapp-tail-out:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 13px;
+  background-color: #dcf8c6;
+  border-bottom-right-radius: 10px;
 }
 
 .whatsapp-tail-in {
@@ -51,113 +74,91 @@
   left: -8px;
   width: 8px;
   height: 13px;
-  background-color: var(--whatsapp-bubble-other);
-  clip-path: polygon(0 0, 100% 0, 100% 100%);
-  transform: rotate(90deg);
+  background-color: white;
+  border-bottom-right-radius: 16px 14px;
 }
 
-/* Read/Delivered indicators */
+.whatsapp-tail-in:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 13px;
+  background-color: white;
+  border-bottom-left-radius: 10px;
+}
+
+/* WhatsApp message read/delivered indicators */
 .whatsapp-tick {
-  margin-left: 4px;
-  display: inline-block;
+  display: inline-flex;
+  margin-left: 3px;
 }
 
 .whatsapp-single-tick {
-  color: var(--whatsapp-tick-delivered);
+  color: #a5a5a5;
 }
 
 .whatsapp-read-tick {
-  color: var(--whatsapp-tick-read);
+  color: #53bdeb;
 }
 
-/* Better scrollbar for message area */
-.scrollbar-container::-webkit-scrollbar {
-  width: 8px;
+/* Media in messages */
+.message-image-container {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 5px;
+  max-width: 100%;
 }
 
-.scrollbar-container::-webkit-scrollbar-track {
-  background: transparent;
+.message-image {
+  max-width: 250px;
+  max-height: 300px;
+  border-radius: 6px;
+  display: block;
+  object-fit: contain;
 }
 
-.scrollbar-container::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
-}
-
-.scrollbar-container:hover::-webkit-scrollbar-thumb {
+.image-icon {
   background-color: rgba(0, 0, 0, 0.3);
-}
-
-/* Dark mode overrides */
-html[data-theme="dark"] .scrollbar-container::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-html[data-theme="dark"] .scrollbar-container:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Status viewer improvements */
-.status-viewers-list {
-  max-height: 200px;
-  overflow-y: auto;
-  border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.8);
-}
-
-.status-viewer-item {
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.status-viewer-item:last-child {
-  border-bottom: none;
-}
-
-.status-view-count {
-  display: flex;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 999px;
-  padding: 4px 8px;
-  font-size: 12px;
-  color: white;
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-}
-
-/* Status scroll indicators */
-.scroll-button {
-  position: fixed;
-  right: 16px;
-  background-color: white;
+  padding: 3px;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+}
+
+.message-audio-container {
+  min-width: 160px;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  margin: 2px 0;
+}
+
+.audio-play-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  z-index: 10;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
-.scroll-up-button {
-  top: 80px;
+.audio-play-button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-.scroll-down-button {
-  bottom: 80px;
-}
+/* Mobile optimization */
+@media (max-width: 640px) {
+  .whatsapp-message {
+    max-width: 80%;
+    font-size: 0.85rem;
+  }
+  
+  .message-image {
+    max-width: 200px;
+    max-height: 250px;
+  }
 
-.scroll-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  .message-audio-container {
+    min-width: 140px;
+  }
 }
-
-/* Import status-indicators.css */
-@import './status-indicators.css';

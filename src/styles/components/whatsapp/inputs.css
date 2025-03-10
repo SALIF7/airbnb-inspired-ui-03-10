@@ -1,89 +1,55 @@
 
+/* Input area */
 .whatsapp-input-area {
   display: flex;
   align-items: center;
-  padding: 8px;
-  background-color: #f0f2f5;
-  border-top: 1px solid #e9edef;
+  padding: 10px 16px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #e1e1e1;
+  flex-shrink: 0;
 }
 
 .whatsapp-input {
   flex: 1;
-  min-height: 20px;
-  max-height: 100px;
-  overflow-y: auto;
+  border-radius: 20px;
   padding: 9px 12px;
   background-color: white;
-  border-radius: 20px;
-  margin: 0 8px;
+  border: 1px solid #e1e1e1;
+  min-height: 24px;
+  max-height: 100px;
+  overflow-y: auto;
   outline: none;
-  line-height: 1.4;
-  font-size: 15px;
-  color: #333;
+  direction: ltr; /* S'assurer que le texte s'affiche de gauche à droite */
+  text-align: left; /* S'assurer que le texte s'aligne à gauche */
+}
+
+/* Ajouter un placeholder pour l'input */
+.whatsapp-input[data-placeholder]:empty:before {
+  content: attr(data-placeholder);
+  color: #999;
+  pointer-events: none;
 }
 
 .whatsapp-send-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: var(--whatsapp-green);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: var(--whatsapp-primary);
   color: white;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.whatsapp-send-button:hover {
-  background-color: var(--whatsapp-green);
-  opacity: 0.9;
-}
-
-.whatsapp-send-button:disabled {
-  background-color: #e9edef;
-  color: #a9a9a9;
-  cursor: not-allowed;
-}
-
-.whatsapp-send-button svg {
-  width: 20px;
-  height: 20px;
-}
-
-.whatsapp-emoji-button,
-.whatsapp-attach-button {
+  border-radius: 50%;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--whatsapp-icon-color);
+  margin-left: 8px;
   cursor: pointer;
 }
 
-.whatsapp-emoji-button:hover,
-.whatsapp-attach-button:hover {
-  background-color: #e9edef;
+.media-preview-container {
+  margin-right: 8px;
+  position: relative;
 }
 
-.dark-mode .whatsapp-input-area {
-  background-color: #1f2c34;
-  border-top-color: #2a3942;
-}
-
-.dark-mode .whatsapp-input {
-  background-color: #2a3942;
-  color: #e9edef;
-}
-
-.dark-mode .whatsapp-emoji-button,
-.dark-mode .whatsapp-attach-button {
-  color: #8696a0;
-}
-
-.dark-mode .whatsapp-emoji-button:hover,
-.dark-mode .whatsapp-attach-button:hover {
-  background-color: #2a3942;
+.media-preview {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
 }

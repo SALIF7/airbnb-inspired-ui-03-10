@@ -3,7 +3,6 @@
 export type Message = {
   id: string;
   content: string;
-  image?: string; // Add image support
   timestamp: Date;
   read: boolean;
   sender: "user" | "admin" | "system" | "other";

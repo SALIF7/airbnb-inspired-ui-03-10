@@ -42,7 +42,6 @@ export const ListingFormDialog = ({
     handleNeighborhoodChange,
     handleImageChange,
     removeImage,
-    resetImages,
     handleSubmit,
     handleCancel,
     handleDialogChange
@@ -95,7 +94,6 @@ export const ListingFormDialog = ({
             onImageChange={handleImageChange}
             removeImage={removeImage}
             error={errors.images}
-            clearAllImages={resetImages}
           />
         </div>
 

@@ -27,5 +27,5 @@ export const validateSettings = (settings: any): SiteSettings => {
     }
   }
   
-  return validatedSettings as SiteSettings;
+  return validatedSettings;
 };

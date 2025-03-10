@@ -1,6 +1,4 @@
 
-import { useAuth } from './auth/AuthProvider';
-export { useAuth };
-export type { User, LoginCredentials, RegisterData, AuthContextType } from './auth/types';
-
-// No default export - this avoids the duplicate identifier issue
+import useAuth from './auth/useAuth';
+export type { User, LoginCredentials, RegisterData } from './auth/types';
+export default useAuth;

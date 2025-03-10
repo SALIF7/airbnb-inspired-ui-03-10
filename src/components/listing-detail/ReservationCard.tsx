@@ -9,7 +9,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import DateRangePicker from "@/components/shared/DateRangePicker";
-import { useLanguage } from "@/hooks/language";
+import { useLanguage } from "@/hooks/useLanguage";
 
 interface ReservationCardProps {
   price: string;

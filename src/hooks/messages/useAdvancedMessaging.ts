@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Conversation } from '@/components/messages/types';
 
@@ -19,21 +18,21 @@ export const useAdvancedMessaging = (
     return online;
   });
   
-  // Recherche simple
+  // Recherche avancée
   const [advancedSearchQuery, setAdvancedSearchQuery] = useState('');
   const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
   
   // Réponses rapides pour l'administrateur
   const [quickResponses, setQuickResponses] = useState<string[]>([
     "Bonjour, comment puis-je vous aider ?",
-    "Merci pour votre message",
-    "Je vous recontacte dès que possible"
+    "Merci pour votre message, je vais m'en occuper.",
+    "Je vous recontacte dès que possible."
   ]);
   
-  // Conversations importantes
+  // Conversations importantes - change from string[] to Record<string, boolean>
   const [markedImportant, setMarkedImportant] = useState<Record<string, boolean>>({});
   
-  // Message preview mode (new functionality)
+  // Mode de prévisualisation avant envoi
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   
   // Ajouter une réponse rapide
@@ -55,7 +54,7 @@ export const useAdvancedMessaging = (
     setNewMessage(text);
   };
   
-  // Marquer une conversation comme importante
+  // Marquer une conversation comme importante - updated to use Record<string, boolean>
   const toggleImportant = (conversationId: string) => {
     setMarkedImportant(prev => {
       const updated = { ...prev };
@@ -70,21 +69,7 @@ export const useAdvancedMessaging = (
     });
   };
   
-  // Preview message functions
-  const previewMessage = () => {
-    setIsPreviewMode(true);
-  };
-  
-  const sendFromPreview = () => {
-    handleSendMessage();
-    setIsPreviewMode(false);
-  };
-  
-  const cancelPreview = () => {
-    setIsPreviewMode(false);
-  };
-  
-  // Fonction de recherche simple
+  // Fonction de recherche avancée
   const performAdvancedSearch = (query: string) => {
     if (!query.trim()) return [];
     
@@ -103,6 +88,23 @@ export const useAdvancedMessaging = (
       
       return hasMatchingMessages || userInfoMatches;
     });
+  };
+  
+  // Prévisualiser le message avant envoi
+  const previewMessage = () => {
+    if (!newMessage.trim()) return;
+    setIsPreviewMode(true);
+  };
+  
+  // Envoyer depuis la prévisualisation
+  const sendFromPreview = () => {
+    setIsPreviewMode(false);
+    handleSendMessage();
+  };
+  
+  // Annuler la prévisualisation
+  const cancelPreview = () => {
+    setIsPreviewMode(false);
   };
   
   return {

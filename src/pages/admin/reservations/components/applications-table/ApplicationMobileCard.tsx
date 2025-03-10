@@ -6,7 +6,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MapPin, Phone, Eye, Check, X } from 'lucide-react';
 import { JobApplication, Job } from '@/types/job';
 import StatusBadge from './StatusBadge';
-import { useLanguage } from '@/hooks/language';
 
 interface ApplicationMobileCardProps {
   application: JobApplication;
@@ -21,8 +20,6 @@ const ApplicationMobileCard: React.FC<ApplicationMobileCardProps> = ({
   onSelectApplication,
   updateApplicationStatus
 }) => {
-  const { t } = useLanguage();
-  
   return (
     <div key={application.id} className="bg-white rounded-lg shadow overflow-hidden border">
       <div className="p-4 border-b">
@@ -61,7 +58,7 @@ const ApplicationMobileCard: React.FC<ApplicationMobileCardProps> = ({
           className="text-xs h-8"
         >
           <Eye className="h-3.5 w-3.5 mr-1" />
-          {t('details')}
+          Détails
         </Button>
         <div className="flex space-x-2">
           <Button 
@@ -72,7 +69,7 @@ const ApplicationMobileCard: React.FC<ApplicationMobileCardProps> = ({
             onClick={() => updateApplicationStatus(application.id, job.id, 'approved')}
           >
             <Check className="h-3.5 w-3.5 mr-1" />
-            {t('accept')}
+            Accepter
           </Button>
           <Button 
             variant="ghost" 
@@ -82,7 +79,7 @@ const ApplicationMobileCard: React.FC<ApplicationMobileCardProps> = ({
             onClick={() => updateApplicationStatus(application.id, job.id, 'rejected')}
           >
             <X className="h-3.5 w-3.5 mr-1" />
-            {t('reject')}
+            Refuser
           </Button>
         </div>
       </div>

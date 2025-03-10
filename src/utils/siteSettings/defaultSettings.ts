@@ -6,7 +6,7 @@ export const defaultSettings: SiteSettings = {
   logo: '/lovable-uploads/94c4ec86-49e9-498e-8fd3-ecdc693ca9fd.png',
   primaryColor: '#f59e0b', // Jaune doré comme dans le logo
   secondaryColor: '#000000', // Noir comme dans le logo
-  defaultLanguage: 'fr',
+  language: 'fr',
   footer: {
     contact: 'Contactez-nous pour toute question concernant nos services de sécurité et de gardiennage.',
     about: 'SHALOM SECURITY est une agence de sécurité spécialisée dans le gardiennage et la protection de biens et de personnes au Togo.',
@@ -41,6 +41,7 @@ export const defaultSettings: SiteSettings = {
   fontFamily: 'Inter, sans-serif',
   borderRadius: 'medium',
   darkMode: false,
+  defaultLanguage: 'fr',
   defaultCurrency: 'XOF',
   dateFormat: 'dd/MM/yyyy',
   timeFormat: '24h',

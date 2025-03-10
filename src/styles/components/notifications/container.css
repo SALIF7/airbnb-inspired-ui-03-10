@@ -1,8 +1,0 @@
-
-/* Base container styles */
-.notification-container {
-  padding: 0.5rem;
-  max-height: calc(100vh - 160px);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}

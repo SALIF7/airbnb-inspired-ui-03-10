@@ -1,20 +1,14 @@
 
-import { useState, useCallback } from 'react';
-import useConversationLoader from './messages/useConversationLoader';
+import { useConversationLoader } from './messages/useConversationLoader';
 import { useMessageSender } from './messages/useMessageSender';
 import { useConversationManager } from './messages/useConversationManager';
-import { Conversation, Message } from '@/components/messages/types';
-import { v4 as uuidv4 } from 'uuid';
 
 export const useMessages = (userId: string | undefined) => {
   const {
     conversations,
+    setConversations,
     selectedConversation,
-    setSelectedConversation,
-    getUnreadCount,
-    markConversationAsRead,
-    updateConversationWithMessage,
-    setConversations
+    setSelectedConversation
   } = useConversationLoader(userId);
 
   const {
@@ -33,67 +27,15 @@ export const useMessages = (userId: string | undefined) => {
     searchQuery,
     setSearchQuery,
     handleSelectConversation,
+    getUnreadCount,
     onlineUsers,
     isUserOnline
   } = useConversationManager(
     conversations,
+    setConversations,
     selectedConversation,
-    setSelectedConversation,
-    markConversationAsRead
+    setSelectedConversation
   );
-
-  // Fonction pour créer une nouvelle conversation
-  const createNewConversation = useCallback((contactUser: any) => {
-    if (!userId || !contactUser) return null;
-
-    // Vérifier si une conversation existe déjà
-    const existingConversation = conversations.find(
-      conv => conv.with.id === contactUser.id
-    );
-
-    if (existingConversation) {
-      handleSelectConversation(existingConversation);
-      return existingConversation;
-    }
-
-    // Créer une nouvelle conversation
-    const newConversation: Conversation = {
-      id: `user-${userId}-${contactUser.id}-${uuidv4()}`,
-      with: {
-        id: contactUser.id,
-        name: contactUser.name,
-        avatar: contactUser.avatar || '/placeholder.svg',
-        role: contactUser.role || 'user',
-      },
-      messages: [
-        {
-          id: `welcome-${Date.now()}`,
-          content: `Bonjour ! Comment puis-je vous aider aujourd'hui ?`,
-          timestamp: new Date(),
-          read: true,
-          sender: contactUser.id === 'admin' ? 'admin' : 'other',
-        }
-      ],
-      lastMessage: {
-        content: `Bonjour ! Comment puis-je vous aider aujourd'hui ?`,
-        timestamp: new Date(),
-        read: true,
-        sender: contactUser.id === 'admin' ? 'admin' : 'other',
-      }
-    };
-
-    // Mettre à jour la liste des conversations
-    const updatedConversations = [...conversations, newConversation];
-    setConversations(updatedConversations);
-
-    // Sauvegarder dans le localStorage
-    localStorage.setItem(`conversations_${userId}`, JSON.stringify(updatedConversations));
-
-    // Sélectionner la nouvelle conversation
-    handleSelectConversation(newConversation);
-
-    return newConversation;
-  }, [userId, conversations, handleSelectConversation, setConversations]);
 
   return {
     conversations,
@@ -106,9 +48,6 @@ export const useMessages = (userId: string | undefined) => {
     handleSendMessage,
     handleSelectConversation,
     getUnreadCount,
-    isUserOnline,
-    updateConversationWithMessage,
-    createNewConversation,
-    setConversations
+    isUserOnline
   };
 };

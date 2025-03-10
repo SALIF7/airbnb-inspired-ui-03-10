@@ -8,7 +8,7 @@ export const BackButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Ne pas afficher le bouton retour sur la page d'accueil
+  // Don't show back button on home page
   if (location.pathname === '/' || location.pathname === '/index') {
     return null;
   }

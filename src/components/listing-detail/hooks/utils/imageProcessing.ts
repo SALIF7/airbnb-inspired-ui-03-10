@@ -1,4 +1,6 @@
+
 import { Listing } from "@/types/listing";
+import { MagicBook } from "@/components/ui/magic-book";
 
 /**
  * Process and validate listing images

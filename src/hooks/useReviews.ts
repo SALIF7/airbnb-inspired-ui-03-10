@@ -36,46 +36,27 @@ const INITIAL_REVIEWS: Review[] = [
 ];
 
 export const useReviews = () => {
-  const { loadData, saveData, getItem, setItem, hasItem } = useLocalStorage();
+  const { loadData, saveData } = useLocalStorage();
   const queryClient = useQueryClient();
-
-  // Stocker la clé pour les avis dans une constante pour éviter les erreurs de frappe
-  const REVIEWS_STORAGE_KEY = 'reviews';
 
   const { data: reviews = [], isLoading, error } = useQuery({
     queryKey: ['reviews'],
     queryFn: async (): Promise<Review[]> => {
-      // Vérifier si des avis sont déjà stockés
-      if (!hasItem(REVIEWS_STORAGE_KEY)) {
-        console.log("Initialisation des avis avec les données par défaut");
-        // Si c'est la première fois, enregistrer les avis initiaux
-        setItem(REVIEWS_STORAGE_KEY, INITIAL_REVIEWS);
-        return INITIAL_REVIEWS;
-      }
-      
-      const storedReviews = getItem<Review[]>(REVIEWS_STORAGE_KEY, INITIAL_REVIEWS);
-      console.log(`Chargement de ${storedReviews.length} avis depuis le localStorage`);
-      return storedReviews;
+      return loadData('reviews', INITIAL_REVIEWS);
     },
     staleTime: 0,
     gcTime: 0,
     refetchOnMount: true,
-    refetchOnWindowFocus: false // Changé à false pour éviter de réinitialiser au focus
+    refetchOnWindowFocus: true
   });
 
   const updateReviewStatus = useMutation({
     mutationFn: async ({ reviewId, status }: { reviewId: string; status: Review['status'] }) => {
-      // Récupérer les avis actuels directement depuis le stockage local
-      const currentReviews = getItem<Review[]>(REVIEWS_STORAGE_KEY, []);
-      
+      const currentReviews = loadData('reviews', INITIAL_REVIEWS);
       const updatedReviews = currentReviews.map(review =>
         review.id === reviewId ? { ...review, status } : review
       );
-      
-      // Sauvegarder les avis mis à jour
-      setItem(REVIEWS_STORAGE_KEY, updatedReviews);
-      console.log(`Statut de l'avis ${reviewId} mis à jour: ${status}`);
-      
+      saveData('reviews', updatedReviews);
       return { reviewId, status };
     },
     onSuccess: () => {
@@ -89,17 +70,11 @@ export const useReviews = () => {
 
   const updateReviewContent = useMutation({
     mutationFn: async (updatedReview: Review) => {
-      // Récupérer les avis actuels directement depuis le stockage local
-      const currentReviews = getItem<Review[]>(REVIEWS_STORAGE_KEY, []);
-      
+      const currentReviews = loadData('reviews', INITIAL_REVIEWS);
       const updatedReviews = currentReviews.map(review =>
         review.id === updatedReview.id ? updatedReview : review
       );
-      
-      // Sauvegarder les avis mis à jour
-      setItem(REVIEWS_STORAGE_KEY, updatedReviews);
-      console.log(`Contenu de l'avis ${updatedReview.id} mis à jour`);
-      
+      saveData('reviews', updatedReviews);
       return updatedReview;
     },
     onSuccess: () => {
@@ -113,23 +88,15 @@ export const useReviews = () => {
 
   const addReview = useMutation({
     mutationFn: async (newReview: Omit<Review, "id" | "status" | "date">) => {
-      // Récupérer les avis actuels directement depuis le stockage local
-      const currentReviews = getItem<Review[]>(REVIEWS_STORAGE_KEY, []);
-      
+      const currentReviews = loadData('reviews', INITIAL_REVIEWS);
       const review = {
         ...newReview,
         id: Math.random().toString(36).substring(7),
         date: new Date().toISOString().split('T')[0],
         status: 'pending' as const
       };
-      
-      // Ajouter le nouvel avis au début du tableau
-      const updatedReviews = [review, ...currentReviews];
-      
-      // Sauvegarder les avis mis à jour
-      setItem(REVIEWS_STORAGE_KEY, updatedReviews);
-      console.log(`Nouvel avis ajouté pour l'annonce ${review.listingId}`);
-      
+      const updatedReviews = [...currentReviews, review];
+      saveData('reviews', updatedReviews);
       return review;
     },
     onSuccess: () => {
@@ -143,15 +110,9 @@ export const useReviews = () => {
 
   const deleteReview = useMutation({
     mutationFn: async (reviewId: string) => {
-      // Récupérer les avis actuels directement depuis le stockage local
-      const currentReviews = getItem<Review[]>(REVIEWS_STORAGE_KEY, []);
-      
+      const currentReviews = loadData('reviews', INITIAL_REVIEWS);
       const updatedReviews = currentReviews.filter(review => review.id !== reviewId);
-      
-      // Sauvegarder les avis mis à jour
-      setItem(REVIEWS_STORAGE_KEY, updatedReviews);
-      console.log(`Avis ${reviewId} supprimé`);
-      
+      saveData('reviews', updatedReviews);
       return reviewId;
     },
     onSuccess: () => {

@@ -1,28 +1,26 @@
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './styles/theme.css';
-import { BrowserRouter } from 'react-router-dom';
+import { createRoot } from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from './hooks/useTheme';
-import { AccessibilityProvider } from './hooks/useAccessibility';
-import { AuthProvider } from './hooks/auth/useAuth';
+import { LanguageProvider } from './providers/LanguageProvider';
 
+// Custom CSS variables for the SHALOM theme updated to Airbnb colors
+document.documentElement.style.setProperty('--sholom-primary', '#FF385C');
+document.documentElement.style.setProperty('--sholom-primary-dark', '#D90B63');
+document.documentElement.style.setProperty('--sholom-secondary', '#F7F7F7');
+document.documentElement.style.setProperty('--sholom-accent', '#FF385C');
+document.documentElement.style.setProperty('--sholom-dark', '#222222');
+document.documentElement.style.setProperty('--sholom-light', '#FFFFFF');
+document.documentElement.style.setProperty('--sholom-muted', '#717171');
+
+// Créer un client pour React Query
 const queryClient = new QueryClient();
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AccessibilityProvider>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
-          </AccessibilityProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </BrowserRouter>
-  </React.StrictMode>,
+createRoot(document.getElementById("root")!).render(
+  <QueryClientProvider client={queryClient}>
+    <LanguageProvider>
+      <App />
+    </LanguageProvider>
+  </QueryClientProvider>
 );

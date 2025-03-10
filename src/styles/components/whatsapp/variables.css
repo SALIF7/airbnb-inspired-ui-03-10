@@ -1,33 +1,15 @@
 
+/* WhatsApp style variables */
 :root {
-  /* Couleurs primaires de WhatsApp */
-  --whatsapp-green: #00a884;
-  --whatsapp-header: #008069;
-  --whatsapp-dark-header: #1f2c34;
-  
-  /* Couleurs des bulles de message */
-  --whatsapp-bubble-me: #d9fdd3;
-  --whatsapp-bubble-other: #ffffff;
-  
-  /* Couleurs d'arrière-plan */
-  --whatsapp-chat-background: #efeae2;
-  --whatsapp-dark-background: #111b21;
-  
-  /* Autres couleurs */
-  --whatsapp-icon-color: #54656f;
-  --whatsapp-divider: #e9edef;
-  --whatsapp-online: #00a884;
-  --whatsapp-offline: #8696a0;
-  --whatsapp-message-timestamp: rgba(0, 0, 0, 0.45);
-  --whatsapp-tick-delivered: #8696a0;
-  --whatsapp-tick-read: #53bdeb;
-}
-
-html[data-theme="dark"] {
-  --whatsapp-chat-background: #0b141a;
-  --whatsapp-bubble-me: #005c4b;
-  --whatsapp-bubble-other: #1f2c34;
-  --whatsapp-message-timestamp: rgba(255, 255, 255, 0.6);
-  --whatsapp-tick-delivered: #8696a0;
-  --whatsapp-tick-read: #53bdeb;
+  --whatsapp-primary: #128c7e;
+  --whatsapp-secondary: #25D366;
+  --whatsapp-light-bg: #e5ddd5;
+  --whatsapp-user-bubble: #dcf8c6;
+  --whatsapp-other-bubble: white;
+  --whatsapp-header-height: 60px;
+  --whatsapp-footer-height: 62px;
+  --whatsapp-avatar-size: 40px;
+  --whatsapp-avatar-size-small: 32px;
+  --whatsapp-border-radius: 7.5px;
+  --whatsapp-indicator-size: 12px;
 }

@@ -1,3 +1,4 @@
+
 export type JobDomain = 
   | "residential_security" // Sécurité résidentielle
   | "bodyguard" // Garde du corps
@@ -15,10 +16,9 @@ export type JobDomain =
   | "security_manager" // Responsable sécurité
   | "security_consultant" // Consultant sécurité
   | "security_trainer" // Formateur sécurité
-  | "housing_offer" // Offre de logement
-  | string; // Adding string to allow free text entry
+  | "housing_offer"; // Offre de logement
 
-export type JobContract = "full_time" | "part_time" | "contract" | string; // Adding string to allow free text entry
+export type JobContract = "full_time" | "part_time" | "contract";
 
 export type ApplicationStatus = "pending" | "approved" | "rejected";
 

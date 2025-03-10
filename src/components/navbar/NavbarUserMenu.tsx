@@ -1,6 +1,11 @@
 
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { LogIn, Menu, User } from "lucide-react";
+import { motion } from "framer-motion";
+import useAuth from "@/hooks/useAuth";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useLanguage } from "@/hooks/useLanguage";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,162 +13,99 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import {
-  User,
-  Settings,
-  LogOut,
-  Heart,
-  CalendarDays,
-  MessageSquare,
-  Bell,
-} from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
+} from "@/components/ui/dropdown-menu";
+import { LanguageSelector } from './LanguageSelector';
 
 interface NavbarUserMenuProps {
   mobileMenuOpen?: boolean;
-  setMobileMenuOpen?: (open: boolean) => void;
+  setMobileMenuOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const NavbarUserMenu = ({ mobileMenuOpen, setMobileMenuOpen }: NavbarUserMenuProps) => {
-  const { user, logout } = useAuth();
-  const [avatarSrc, setAvatarSrc] = useState<string | undefined>(user?.avatar);
-  const [avatarKey, setAvatarKey] = useState(Date.now());
-
+export const NavbarUserMenu: React.FC<NavbarUserMenuProps> = ({ 
+  mobileMenuOpen, 
+  setMobileMenuOpen 
+}) => {
+  const { user } = useAuth();
+  const { settings } = useSiteSettings();
+  const { t } = useLanguage();
+  const [userAvatar, setUserAvatar] = useState<string | undefined>(user?.avatar);
+  
   useEffect(() => {
-    // Check for avatar in localStorage first (for immediate updates)
     const storedAvatar = localStorage.getItem('userAvatar');
     if (storedAvatar) {
-      setAvatarSrc(storedAvatar);
-      setAvatarKey(Date.now());
+      setUserAvatar(storedAvatar);
     } else if (user?.avatar) {
-      setAvatarSrc(user.avatar);
-      setAvatarKey(Date.now());
+      setUserAvatar(user.avatar);
     }
-
-    // Set up listener for avatar changes
-    const checkForAvatarUpdates = () => {
-      const currentStoredAvatar = localStorage.getItem('userAvatar');
-      if (currentStoredAvatar && currentStoredAvatar !== avatarSrc) {
-        setAvatarSrc(currentStoredAvatar);
-        setAvatarKey(Date.now());
-      }
-    };
-
-    const intervalId = setInterval(checkForAvatarUpdates, 2000);
-    return () => clearInterval(intervalId);
-  }, [user?.avatar]);
-
-  const handleLogout = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    logout();
-  };
-
-  if (!user) {
-    return (
-      <div className="flex items-center gap-2">
-        <Link to="/login">
-          <Button variant="outline" size="sm">
-            Connexion
-          </Button>
-        </Link>
-        <Link to="/register">
-          <Button size="sm">Inscription</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  const initials = user?.name
-    ? `${user.name.charAt(0)}${user.name.split(" ")[1]?.charAt(0) || ""}`
-    : "U";
-
+  }, [user]);
+  
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="relative h-14 w-14 rounded-full border-2 border-blue-200 shadow-sm hover:border-primary hover:border-opacity-80 focus:ring-2 focus:ring-primary focus:ring-offset-2 p-0 overflow-hidden"
-          aria-label="Menu utilisateur"
-        >
-          <div className="h-full w-full rounded-full overflow-hidden">
-            {avatarSrc ? (
-              <img 
-                key={avatarKey}
-                src={avatarSrc} 
-                alt={user.name || "Utilisateur"}
-                className="user-avatar-display"
-              />
-            ) : (
-              <div className="h-full w-full bg-primary/10 flex items-center justify-center">
-                <span className="text-primary text-xl font-bold">{initials}</span>
+    <div className="flex items-center gap-2">
+      <LanguageSelector />
+      
+      {user ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <motion.div 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="flex items-center border border-gray-200 rounded-full px-3 py-1.5 gap-2 bg-white hover:shadow-md cursor-pointer relative"
+            >
+              <Menu className="h-4 w-4" />
+              <div className="h-8 w-8 flex items-center justify-center rounded-full bg-gray-100 overflow-hidden border border-gray-200">
+                {userAvatar ? (
+                  <img 
+                    src={userAvatar} 
+                    alt={user.name}
+                    className="h-full w-full object-cover" 
+                    onError={(e) => {
+                      e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E";
+                    }}
+                  />
+                ) : (
+                  <User className="h-5 w-5 text-gray-500" />
+                )}
               </div>
-            )}
-          </div>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel>
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {user.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {user.isAdmin && (
-          <DropdownMenuItem asChild>
-            <Link to="/admin" className="cursor-pointer">
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Espace Admin</span>
-            </Link>
-          </DropdownMenuItem>
-        )}
-        <DropdownMenuItem asChild>
-          <Link to="/profile" className="cursor-pointer">
-            <User className="mr-2 h-4 w-4" />
-            <span>Mon Profil</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/favorites" className="cursor-pointer">
-            <Heart className="mr-2 h-4 w-4" />
-            <span>Favoris</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/reservations" className="cursor-pointer">
-            <CalendarDays className="mr-2 h-4 w-4" />
-            <span>Réservations</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/messages" className="cursor-pointer">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            <span>Messages</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/notifications" className="cursor-pointer">
-            <Bell className="mr-2 h-4 w-4" />
-            <span>Notifications</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem 
-          className="cursor-pointer text-red-500 focus:text-red-500" 
-          onClick={handleLogout}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Déconnexion</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+              <div className="h-2 w-2 absolute top-1 right-2 rounded-full bg-red-500"></div>
+            </motion.div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 bg-white shadow-md z-50">
+            <DropdownMenuLabel>{t('profile')}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link to="/profile" className="w-full">{t('profile')}</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/favorites" className="w-full">{t('favorites')}</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/reservations" className="w-full">{t('reservations')}</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link to="/messages" className="w-full">{t('messages')}</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/notifications" className="w-full">{t('notifications')}</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Link to="/logout" className="w-full text-red-500">{t('logout')}</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <Link to="/login">
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center bg-sholom-primary text-white rounded-full px-4 py-2 gap-2 shadow-sm hover:bg-sholom-primary/90"
+          >
+            <LogIn className="h-4 w-4" />
+            <span className="font-medium">{t('login')}</span>
+          </motion.div>
+        </Link>
+      )}
+    </div>
   );
 };
-
-export default NavbarUserMenu;
-export { NavbarUserMenu };

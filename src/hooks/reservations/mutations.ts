@@ -31,9 +31,10 @@ export const useReservationMutations = () => {
       }
     },
     onSuccess: (newReservation) => {
-      // Mettre à jour immédiatement le cache pour que les changements soient visibles
+      // Mettre à jour le cache pour éviter de perdre les données au rechargement
       queryClient.setQueryData(["reservations"], (old: Reservation[] = []) => {
-        return [...old, newReservation];
+        const updatedReservations = [...old, newReservation];
+        return updatedReservations;
       });
       
       // Invalider la requête pour forcer un rechargement des données
@@ -73,7 +74,7 @@ export const useReservationMutations = () => {
       }
     },
     onSuccess: ({ reservationId, status, updatedReservation }) => {
-      // Mettre à jour immédiatement le cache
+      // Mettre à jour le cache pour éviter de perdre les données au rechargement
       queryClient.setQueryData(["reservations"], (old: Reservation[] = []) => {
         return old.map((reservation) =>
           reservation.id === reservationId ? { ...reservation, status } : reservation

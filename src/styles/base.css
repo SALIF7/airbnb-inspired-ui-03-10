@@ -17,7 +17,7 @@
     --primary: 348 100% 61%;
     --primary-foreground: 0 0% 100%;
  
-    --secondary: 0 0% 96%;
+    --secondary: 0 0% 98%;
     --secondary-foreground: 222.2 47.4% 11.2%;
  
     --muted: 210 40% 96.1%;
@@ -38,11 +38,41 @@
     /* SHALOM variables */
     --sholom-primary: 348 100% 61%;
     --sholom-primary-dark: 348 83% 47%;
-    --sholom-secondary: 0 0% 96%;
+    --sholom-secondary: 0 0% 98%;
     --sholom-accent: 348 100% 61%;
     --sholom-dark: 0 0% 13%;
     --sholom-light: 0 0% 98%;
     --sholom-muted: 0 0% 45%;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+ 
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+ 
+    --primary: 348 100% 61%;
+    --primary-foreground: 0 0% 100%;
+ 
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+ 
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+ 
+    --accent: 348 100% 61%;
+    --accent-foreground: 0 0% 100%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+ 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 348 100% 61%;
   }
 }
  
@@ -54,12 +84,6 @@
     @apply bg-background text-foreground;
     transition: background-color 0.3s ease-in-out;
     direction: ltr; /* Force left-to-right text direction */
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    width: 100%;
-    overflow-x: hidden;
-    font-family: sans-serif;
   }
   
   /* Message content should always display left-to-right */
@@ -114,36 +138,5 @@
     background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 100%);
     pointer-events: none;
   }
-  
-  /* Fix for dropdown menus visibility */
-  .dropdown-content, 
-  [role="menu"],
-  [data-radix-popper-content-wrapper] {
-    background-color: white !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-    z-index: 50 !important;
-  }
-
-  /* Reset styles for #root */
-  #root {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 100%;
-  }
-
-  /* Global container */
-  .content-container {
-    width: 90%;
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-
-  /* Fix for elements with fixed position */
-  .fixed {
-    position: fixed;
-    z-index: 50;
-  }
 }
+

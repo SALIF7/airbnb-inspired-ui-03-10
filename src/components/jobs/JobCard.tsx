@@ -26,20 +26,6 @@ interface JobCardProps {
 }
 
 export const JobCard = ({ job, itemVariants }: JobCardProps) => {
-  // Fallback image function
-  const getDisplayImage = () => {
-    if (job.image && (job.image.startsWith('http') || job.image.startsWith('data:image/'))) {
-      return job.image;
-    }
-    
-    if (job.images && job.images.length > 0) {
-      const validImage = job.images.find(img => img.startsWith('http') || img.startsWith('data:image/'));
-      if (validImage) return validImage;
-    }
-    
-    return getDomainImage(job.domain);
-  };
-
   return (
     <motion.div 
       className="bg-white rounded-xl shadow-sm overflow-hidden hover-shadow transition-all duration-300 group"
@@ -50,13 +36,9 @@ export const JobCard = ({ job, itemVariants }: JobCardProps) => {
           {/* Image représentative du poste */}
           <div className="lg:w-1/4 h-48 lg:h-auto relative overflow-hidden">
             <img 
-              src={getDisplayImage()}
+              src={job.images?.[0] || getDomainImage(job.domain)}
               alt={job.title}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-              onError={(e) => {
-                console.error("Erreur de chargement d'image dans la carte:", job.id);
-                e.currentTarget.src = getDomainImage(job.domain);
-              }}
             />
             {job.isHousingOffer && (
               <div className="absolute top-3 left-3">

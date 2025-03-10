@@ -10,11 +10,10 @@ import { SearchBar } from '@/components/home/SearchBar';
 import { ListingsGrid } from '@/components/home/ListingsGrid';
 import { FeaturesSection } from '@/components/home/FeaturesSection';
 import { PopularNeighborhoods } from '@/components/home/PopularNeighborhoods';
-import { TestimonialsSection } from '@/components/home/testimonials';
+import { TestimonialsSection } from '@/components/home/TestimonialsSection';
 import { Footer } from '@/components/home/Footer';
 import { useLocation } from 'react-router-dom';
 import { StatusBanner } from '@/components/home/status-banner';
-import { ScrollAnimation } from '@/components/ui/scroll-animation';
 
 const Index = () => {
   const { listings, isLoading } = useListings();
@@ -87,77 +86,59 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white w-screen p-0 m-0">
       <Navbar />
       
       {!searchTerm && <HeroSection />}
       
-      <ScrollAnimation direction="down" duration={0.5}>
-        <div className="w-full py-8 bg-gradient-to-r from-slate-50 to-white">
-          <div className="container mx-auto px-4">
-            <StatusBanner />
-          </div>
+      <div className="w-full py-8 bg-gradient-to-r from-slate-50 to-white">
+        <div className="container mx-auto px-4">
+          <StatusBanner />
         </div>
-      </ScrollAnimation>
+      </div>
       
-      <div className="w-full">
-        <div className="container mx-auto py-10">
+      <div className="w-screen p-0 m-0">
+        <div className="content-container py-10 p-0 m-0">
           {!searchTerm && <FeaturesSection />}
         </div>
       </div>
       
-      <div className="pt-4 w-full">
-        <ScrollAnimation direction="up" duration={0.5}>
-          <div className="container mx-auto">
-            <CategoryFiltersSimplified />
-          </div>
-        </ScrollAnimation>
+      <div className="pt-4 w-screen p-0 m-0">
+        <div className="content-container p-0 m-0">
+          <CategoryFiltersSimplified />
+        </div>
         
-        <div className="py-4 w-full">
-          <ScrollAnimation direction="right" duration={0.5}>
-            <div className="container mx-auto">
-              <SearchBar 
-                searchTerm={searchTerm} 
-                setSearchTerm={setSearchTerm} 
-                primaryColor={settings.primaryColor} 
-              />
-            </div>
-          </ScrollAnimation>
+        <div className="py-4 w-screen p-0 m-0">
+          <SearchBar 
+            searchTerm={searchTerm} 
+            setSearchTerm={setSearchTerm} 
+            primaryColor={settings.primaryColor} 
+          />
 
-          <ScrollAnimation direction="left" duration={0.5}>
-            <div className="container mx-auto mt-4 mb-6">
-              <h2 className="text-2xl font-medium text-sholom-dark elegant-title">
-                {searchTerm 
-                  ? `Résultats pour "${searchTerm}"` 
-                  : "Coup de cœur voyageurs en Logements partout à Lomé"}
-              </h2>
-              
-              {searchTerm && (
-                <p className="mb-4 text-sholom-muted minimal-text">
-                  {filteredListings.length} résultat(s) trouvé(s)
-                </p>
-              )}
-            </div>
-          </ScrollAnimation>
+          <div className="content-container mt-4 mb-6 p-0 m-0">
+            <h2 className="text-2xl font-medium text-sholom-dark elegant-title">
+              {searchTerm 
+                ? `Résultats pour "${searchTerm}"` 
+                : "Logements en Afrique et partout dans le monde"}
+            </h2>
+            
+            {searchTerm && (
+              <p className="mb-4 text-sholom-muted minimal-text">
+                {filteredListings.length} résultat(s) trouvé(s)
+              </p>
+            )}
+          </div>
           
-          <ScrollAnimation direction="up" staggerContainer={true} staggerChildren={0.05} delay={0.2}>
-            <ListingsGrid 
-              isLoading={isLoading}
-              visibleListings={visibleListings}
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              filteredListings={filteredListings}
-              loadMoreListings={loadMoreListings}
-            />
-          </ScrollAnimation>
+          <ListingsGrid 
+            isLoading={isLoading}
+            visibleListings={visibleListings}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            filteredListings={filteredListings}
+            loadMoreListings={loadMoreListings}
+          />
           
-          {!searchTerm && (
-            <ScrollAnimation direction="right" duration={0.7} delay={0.3}>
-              <div className="container mx-auto">
-                <PopularNeighborhoods setSearchTerm={setSearchTerm} />
-              </div>
-            </ScrollAnimation>
-          )}
+          {!searchTerm && <PopularNeighborhoods setSearchTerm={setSearchTerm} />}
           
           {!searchTerm && <TestimonialsSection />}
         </div>

@@ -14,20 +14,6 @@ const isFirstMessageToAdmin = (conversation: Conversation): boolean => {
 };
 
 /**
- * Récupère le message de bienvenue personnalisé ou utilise celui par défaut
- */
-const getWelcomeMessage = (): string => {
-  const defaultMessage = "Merci pour votre message. Je reviendrai vers vous dès que possible.";
-  try {
-    const storedMessage = localStorage.getItem('admin_welcome_message');
-    return storedMessage || defaultMessage;
-  } catch (error) {
-    console.error("Erreur lors de la récupération du message de bienvenue:", error);
-    return defaultMessage;
-  }
-};
-
-/**
  * Generates and handles automatic responses for system or admin conversations
  * with a realistic delay, but only for first-time messages to admin
  */
@@ -45,7 +31,7 @@ export const handleAutoResponse = (
     (selectedConversation.with.id === 'admin' && isFirstMessageToAdmin(updatedConversation));
   
   if (!shouldAutoRespond) {
-    // Pour les messages non-premiers vers l'admin, juste stocker dans les notifications de l'admin
+    // For non-first messages to admin, just store in admin's notifications
     if (selectedConversation.with.id === 'admin') {
       try {
         // Get user data
@@ -90,7 +76,7 @@ export const handleAutoResponse = (
     const autoResponse: Message = {
       id: `auto-${Date.now()}`,
       content: selectedConversation.with.id === 'admin' 
-        ? getWelcomeMessage()
+        ? "Merci pour votre message. Je reviendrai vers vous dès que possible."
         : "Merci de votre intérêt pour nos services. Notre équipe est là pour vous aider !",
       timestamp: new Date(),
       read: false,

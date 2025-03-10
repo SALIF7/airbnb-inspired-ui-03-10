@@ -67,24 +67,3 @@ export const formatPriceFCFA = (priceEUR: number): string => {
   const priceFCFA = Math.round(priceEUR * 655.957);
   return priceFCFA.toLocaleString('fr-FR');
 };
-
-// Conversion d'un montant en FCFA pour l'affichage
-export const getEuroToFCFA = (amount: number): number => {
-  return Math.round(amount * 655.957);
-};
-
-// Conversion des quartiers pour Lomé
-export const getLoméNeighborhoods = (): string[] => [
-  'Tokoin',
-  'Bè',
-  'Doulassamé',
-  'Hédzranawoé',
-  'Adidogomé',
-  'Agoè',
-  'Atikoumé',
-  'Nyékonakpoè',
-  'Gbadago',
-  'Kodjoviakopé',
-  'Amoutivé',
-  'Tokoin Trésor'
-];

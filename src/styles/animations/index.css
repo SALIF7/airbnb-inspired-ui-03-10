@@ -1,7 +1,0 @@
-
-/* Main animations index file that imports all animation categories */
-@import './page-transitions.css';
-@import './loading.css';
-@import './ui-elements.css';
-@import './interactions.css';
-@import './effects.css';

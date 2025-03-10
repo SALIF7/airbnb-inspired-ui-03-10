@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Conversation, Message } from '@/components/messages/types';
-import { updateUserConversation, markConversationAsRead, saveAdminConversations } from '@/utils/adminMessageUtils';
+import { updateUserConversation, markConversationAsRead } from '@/utils/adminMessageUtils';
 import { toast } from 'sonner';
 
 export const useAdminConversationActions = (
@@ -14,119 +14,89 @@ export const useAdminConversationActions = (
 ) => {
   const [sendingMessage, setSendingMessage] = useState(false);
 
-  // Envoyer un message instantané en tant qu'admin
+  // Send a message as admin with added delay
   const handleSendMessage = () => {
     if (!newMessage.trim() || !selectedConversation) return;
     setSendingMessage(true);
     
-    // Créer le nouveau message immédiatement
-    const messageToSend: Message = {
-      id: `admin-${Date.now()}`,
-      content: newMessage,
-      timestamp: new Date(),
-      read: true,
-      sender: 'admin',
-    };
+    // Show a loading notification to indicate message is being sent
+    const sendingToast = toast.loading("Envoi du message en cours...");
+    
+    // Add a small delay to simulate network latency (1-3 seconds)
+    setTimeout(() => {
+      try {
+        // Create the new message
+        const messageToSend: Message = {
+          id: `admin-${Date.now()}`,
+          content: newMessage,
+          timestamp: new Date(),
+          read: true,
+          sender: 'admin',
+        };
 
-    // Mettre à jour immédiatement la conversation sélectionnée
-    const updatedSelectedConversation: Conversation = {
-      ...selectedConversation,
-      messages: [...selectedConversation.messages, messageToSend],
-      lastMessage: {
-        content: newMessage,
-        timestamp: new Date(),
-        read: true,
-        sender: 'admin' as const,
-      },
-    };
+        // Update the selected conversation
+        const updatedSelectedConversation: Conversation = {
+          ...selectedConversation,
+          messages: [...selectedConversation.messages, messageToSend],
+          lastMessage: {
+            content: newMessage,
+            timestamp: new Date(),
+            read: true,
+            sender: 'admin' as const,
+          },
+        };
 
-    // Mettre à jour toutes les conversations
-    const updatedConversations = conversations.map(conv => 
-      conv.id === selectedConversation.id
-        ? updatedSelectedConversation
-        : conv
-    );
+        // Update all conversations
+        const updatedConversations = conversations.map(conv => 
+          conv.id === selectedConversation.id
+            ? updatedSelectedConversation
+            : conv
+        );
 
-    // Mettre à jour l'état
-    setConversations(updatedConversations);
-    setSelectedConversation(updatedSelectedConversation);
-    
-    // Persister dans localStorage
-    saveAdminConversations(updatedConversations);
-    
-    // Vider le champ de message
-    setNewMessage('');
-    
-    // Mettre à jour la conversation de l'utilisateur dans localStorage
-    const userId = selectedConversation.with.id;
-    updateUserConversation(userId, updatedSelectedConversation);
-    
-    // Notifier les autres onglets ou fenêtres via BroadcastChannel
-    try {
-      const channel = new BroadcastChannel('admin-messaging-channel');
-      channel.postMessage({
-        type: 'refresh-conversations',
-        timestamp: Date.now()
-      });
-      
-      // Nettoyer le canal après utilisation
-      setTimeout(() => channel.close(), 100);
-    } catch (error) {
-      console.error("Erreur lors de la diffusion du message:", error);
-    }
-    
-    // Déclencher un événement pour notifier d'autres composants
-    window.dispatchEvent(new CustomEvent('admin-messages-updated', { 
-      detail: { userId, action: 'message-sent' } 
-    }));
-    
-    // Afficher un toast de succès
-    toast.success("Message envoyé avec succès");
-    setSendingMessage(false);
+        // Update state
+        setConversations(updatedConversations);
+        setSelectedConversation(updatedSelectedConversation);
+        setNewMessage('');
+
+        // Update user's conversation in localStorage
+        const userId = selectedConversation.with.id;
+        updateUserConversation(userId, updatedSelectedConversation);
+
+        toast.dismiss(sendingToast);
+        toast.success("Message envoyé avec succès");
+      } catch (error) {
+        console.error("Erreur lors de l'envoi du message:", error);
+        toast.dismiss(sendingToast);
+        toast.error("Erreur lors de l'envoi du message");
+      } finally {
+        setSendingMessage(false);
+      }
+    }, Math.random() * 2000 + 1000); // 1-3 second delay
   };
 
-  // Sélectionner une conversation et marquer ses messages comme lus
+  // Select a conversation and mark its messages as read
   const handleSelectConversation = (conversation: Conversation) => {
     try {
-      // Marquer les messages comme lus
+      // Mark messages as read
       const updatedConversation = markConversationAsRead(conversation);
       
-      // Mettre à jour toutes les conversations
+      // Update all conversations
       const updatedConversations = conversations.map(conv => 
         conv.id === conversation.id
           ? updatedConversation
           : conv
       );
       
-      // Mettre à jour l'état
+      // Update state
       setConversations(updatedConversations);
       setSelectedConversation(updatedConversation);
       
-      // Persister dans localStorage
-      saveAdminConversations(updatedConversations);
-      
-      // Mettre à jour la conversation de l'utilisateur dans localStorage
+      // Also update the user's conversation in localStorage to mark these as read
       const userId = conversation.with.id;
       updateUserConversation(userId, updatedConversation);
-      
-      // Notifier les autres onglets ou fenêtres
-      try {
-        const channel = new BroadcastChannel('admin-messaging-channel');
-        channel.postMessage({
-          type: 'refresh-conversations',
-          timestamp: Date.now()
-        });
-        setTimeout(() => channel.close(), 100);
-      } catch (error) {
-        console.error("Erreur lors de la diffusion du message:", error);
-      }
-      
-      // Déclencher un événement
-      window.dispatchEvent(new CustomEvent('admin-messages-updated', { 
-        detail: { userId, action: 'conversation-read' } 
-      }));
     } catch (error) {
       console.error("Erreur lors de la sélection de conversation:", error);
+      // Fallback to just selecting without marking as read
       setSelectedConversation(conversation);
     }
   };

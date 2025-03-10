@@ -1,88 +1,27 @@
 
 /* Logo styles */
 .logo {
-  height: 100%;
-  width: 100%;
-  padding: 0;
-  will-change: transform;
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
   transition: all 300ms ease-in-out;
-  object-fit: cover; /* Ensures the logo fills the container */
-  border-radius: 50%; /* Circular shape */
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); /* Shadow for depth */
-  border: 2px solid #FFD700; /* Gold border like in the reference image */
-  background: #000; /* Black background like the reference image */
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 50%; /* Logo rond */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Ombre légère pour effet de profondeur */
+  border: none; /* Pas de bordure */
+  background: transparent; /* Fond transparent */
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 1.5em rgba(255, 215, 0, 0.7)); /* Gold shadow on hover */
-  transform: scale(1.05) rotate(5deg) translateZ(10px); /* 3D rotation effect */
+  filter: drop-shadow(0 0 1.5em rgba(255, 56, 92, 0.7)); /* Ombre colorée au survol */
+  transform: scale(1.05) rotate(5deg); /* Légère rotation et agrandissement au survol */
 }
 
-.logo-container {
-  position: relative;
-  overflow: visible;
-  transform-style: preserve-3d; /* For 3D effect */
-  perspective: 1000px; /* For 3D effect */
-}
-
-.logo-container::after {
-  content: '';
-  position: absolute;
-  top: -5%;
-  left: -5%;
-  right: -5%;
-  bottom: -5%;
-  border-radius: 50%;
-  background: linear-gradient(45deg, rgba(255,215,0,0.1), rgba(255,215,0,0.8), rgba(255,215,0,0.1));
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 300ms ease-in-out;
-}
-
-.logo-container:hover::after {
-  opacity: 1;
-  animation: rotate 1.5s linear infinite;
-}
-
-.logo-fallback {
-  animation: pulse 2s infinite ease-in-out;
-  transition: all 300ms ease-in-out;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  transform-style: preserve-3d;
-  background: #000 !important; /* Black background */
-  border: 2px solid #FFD700; /* Gold border */
-  color: #FFD700 !important; /* Gold text */
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1) translateZ(0);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  50% {
-    transform: scale(1.05) translateZ(10px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  }
-  100% {
-    transform: scale(1) translateZ(0);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Rest of the existing styles */
 .site-name {
   font-family: 'Playfair Display', serif;
   letter-spacing: 0.5px;
-  background: linear-gradient(90deg, #4F46E5, #6366F1);
+  background: linear-gradient(90deg, #FF385C, #CF2E49);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -92,22 +31,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   transition: all 300ms ease;
-  margin-left: 1.5rem;
 }
 
 .site-name:hover {
   letter-spacing: 1px; /* Espacement légèrement plus grand au survol */
-  transform: translateY(-1px);
-}
-
-/* Styles spécifiques pour les avatars d'utilisateur */
-.user-avatar-display {
-  border-radius: 50%;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
 }
 
 @keyframes logo-spin {
@@ -129,10 +56,9 @@
 @media (max-width: 480px) {
   .site-name {
     max-width: 160px !important;
-    font-size: 1.125rem;
+    font-size: 0.95rem;
     letter-spacing: 0;
     display: inline-block !important;
-    margin-left: 1rem;
   }
 }
 
@@ -141,6 +67,5 @@
   .site-name {
     display: inline-block !important;
     max-width: 200px !important;
-    margin-left: 1rem;
   }
 }

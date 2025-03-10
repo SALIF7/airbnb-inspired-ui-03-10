@@ -21,7 +21,7 @@ export const CategoryFiltersSimplified = () => {
             }`}>
               <Briefcase className="h-6 w-6" />
             </div>
-            <span>Emplois</span>
+            <span>Offres d'emploi</span>
           </Link>
           
           <Link

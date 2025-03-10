@@ -1,28 +1,31 @@
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Listing } from "@/types/listing";
-import { toast } from "sonner";
-import { loadListings, saveListings } from "../useListingStorage";
-import { useListingQueries } from "./useListingQueries";
-import { useListingMutations } from "./useListingMutations";
-import { useReservationMutations } from "./useReservationMutations";
-import { purgeAllListingImages } from "./listingImageUtils";
+import { LOME_NEIGHBORHOODS } from "@/constants/locations";
+import { FALLBACK_IMAGES } from "@/constants/images";
+import { useFetchListings } from "./fetchListings";
+import { 
+  useAddListing, 
+  useUpdateListing, 
+  useDeleteListing, 
+  useAddReservation 
+} from "./mutationHooks";
+import { loadReservations } from "../useListingStorage";
 
+// Re-export constants for backward compatibility
 export { LOME_NEIGHBORHOODS } from "@/constants/locations";
 export { FALLBACK_IMAGES } from "@/constants/images";
 
 /**
- * Main hook that combines all listing operations
+ * Combined hook for all listing operations
  */
 export const useListings = () => {
-  const { listings, isLoading, error } = useListingQueries();
-  const { addListing, updateListing, deleteListing, clearAllListingImages } = useListingMutations();
-  const { addReservation, getReservations } = useReservationMutations();
+  const { data: listings = [], isLoading, error } = useFetchListings();
+  const addListing = useAddListing();
+  const updateListing = useUpdateListing();
+  const deleteListing = useDeleteListing();
+  const addReservation = useAddReservation();
 
-  // Utility to manually clear all listing images
-  const purgeImages = () => {
-    purgeAllListingImages();
-    toast.success("Toutes les images ont été supprimées");
+  const getReservations = () => {
+    return loadReservations();
   };
 
   return {
@@ -32,8 +35,6 @@ export const useListings = () => {
     addListing,
     updateListing,
     deleteListing,
-    clearAllListingImages,
-    purgeImages,
     addReservation,
     getReservations
   };

@@ -21,7 +21,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       {status === 'confirmed' ? (
         <>
           <Check className="mr-1 h-3.5 w-3.5" />
-          Confirmé
+          Confirmée
         </>
       ) : status === 'pending' ? (
         <>
@@ -31,7 +31,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       ) : (
         <>
           <X className="mr-1 h-3.5 w-3.5" />
-          Annulé
+          Annulée
         </>
       )}
     </Badge>

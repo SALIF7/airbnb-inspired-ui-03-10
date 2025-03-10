@@ -24,8 +24,6 @@ interface JobFormDialogProps {
   onSave: (formData: Omit<Job, "id">) => void;
   onCancel: () => void;
   buttonText?: string;
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
 }
 
 export const JobFormDialog: React.FC<JobFormDialogProps> = ({
@@ -34,22 +32,20 @@ export const JobFormDialog: React.FC<JobFormDialogProps> = ({
   onSave,
   onCancel,
   buttonText,
-  isOpen,
-  setIsOpen,
 }) => {
   const {
+    isOpen,
+    setIsOpen,
     isSubmitting,
     isUploading,
     title,
     setTitle,
     domain,
-    setDomain,
     description,
     setDescription,
     requirements,
     setRequirements,
     contract,
-    setContract,
     location,
     setLocation,
     salary,
@@ -67,7 +63,7 @@ export const JobFormDialog: React.FC<JobFormDialogProps> = ({
     bathrooms,
     setBathrooms,
     images,
-    setImages,
+    setImages, // This is now correctly included from the hook
     isPublished,
     setIsPublished,
     featuredImage,
@@ -80,18 +76,12 @@ export const JobFormDialog: React.FC<JobFormDialogProps> = ({
     handleSubmit,
     handleDomainChange,
     handleContractChange
-  } = useJobForm({ 
-    selectedJob, 
-    onSave, 
-    onCancel,
-    isOpen,
-    setIsOpen
-  });
+  } = useJobForm({ selectedJob, onSave, onCancel });
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {buttonText ? (
-        <DialogTrigger asChild>
+    <Dialog open={isOpen || isEditing} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        {buttonText ? (
           <Button 
             onClick={() => {
               resetForm();
@@ -102,8 +92,8 @@ export const JobFormDialog: React.FC<JobFormDialogProps> = ({
             <Plus className="h-4 w-4" />
             {buttonText}
           </Button>
-        </DialogTrigger>
-      ) : null}
+        ) : null}
+      </DialogTrigger>
       <DialogContent className="sm:max-w-[725px] h-[90vh] flex flex-col p-0">
         <DialogHeader className="px-6 py-4 border-b">
           <DialogTitle>
@@ -139,13 +129,13 @@ export const JobFormDialog: React.FC<JobFormDialogProps> = ({
               title={title}
               setTitle={setTitle}
               domain={domain}
-              setDomain={setDomain}
+              setDomain={handleDomainChange}
               description={description}
               setDescription={setDescription}
               requirements={requirements}
               setRequirements={setRequirements}
               contract={contract}
-              setContract={setContract}
+              setContract={handleContractChange}
               location={location}
               setLocation={setLocation}
               salary={salary}
@@ -163,6 +153,11 @@ export const JobFormDialog: React.FC<JobFormDialogProps> = ({
               setBathrooms={setBathrooms}
               images={images}
               onAddImage={handleAddImage}
+              onUpdateImage={(index, url) => {
+                const newImages = [...images];
+                newImages[index] = url;
+                setImages(newImages);
+              }}
               onRemoveImage={handleRemoveImage}
               isUploading={isUploading}
             />

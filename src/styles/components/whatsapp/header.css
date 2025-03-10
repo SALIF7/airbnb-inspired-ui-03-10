@@ -1,60 +1,28 @@
 
+/* WhatsApp header */
 .whatsapp-header {
+  background-color: var(--whatsapp-primary);
+  color: white;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  background-color: var(--whatsapp-header);
-  color: white;
+  gap: 8px;
+  height: var(--whatsapp-header-height);
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.whatsapp-header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.whatsapp-user-avatar {
+  width: var(--whatsapp-avatar-size);
+  height: var(--whatsapp-avatar-size);
 }
 
 .whatsapp-user-info {
   display: flex;
   flex-direction: column;
+  margin-left: 10px;
 }
 
-.whatsapp-user-name {
-  font-weight: 500;
-  font-size: 16px;
-  margin-bottom: 2px;
-}
-
-.whatsapp-user-status {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.whatsapp-header-right {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.whatsapp-header-icon {
-  width: 24px;
-  height: 24px;
-  color: white;
-  cursor: pointer;
-}
-
-.back-button {
+.whatsapp-back-button {
   display: none;
-}
-
-@media (max-width: 768px) {
-  .back-button {
-    display: block;
-    margin-right: 8px;
-  }
-}
-
-/* Dark mode adjustments */
-html[data-theme="dark"] .whatsapp-header {
-  background-color: var(--whatsapp-dark-header);
 }

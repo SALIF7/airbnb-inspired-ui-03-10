@@ -4,14 +4,14 @@ import { useJobsService } from "@/services/jobsService";
 import { useJobsMutations } from "@/hooks/useJobsMutations";
 
 export const useJobs = () => {
-  const { loadJobs, purgeAllJobs } = useJobsService();
+  const { loadJobs } = useJobsService();
   const { addJob, updateJob, deleteJob, applyForJob } = useJobsMutations();
 
   // Requête pour obtenir tous les jobs
-  const { data: jobs = [], isLoading, error, refetch } = useQuery({
+  const { data: jobs = [], isLoading, error } = useQuery({
     queryKey: ["jobs"],
     queryFn: loadJobs,
-    staleTime: 0,  // Toujours recharger pour s'assurer d'avoir les dernières données/images
+    staleTime: 0,
     gcTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true
@@ -21,11 +21,9 @@ export const useJobs = () => {
     jobs,
     isLoading,
     error,
-    refetch,
     addJob,
     updateJob,
     deleteJob,
-    applyForJob,
-    purgeAllJobs
+    applyForJob
   };
 };

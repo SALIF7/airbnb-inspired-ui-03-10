@@ -69,7 +69,7 @@ const ApplicationDetailsDialog: React.FC<ApplicationDetailsDialogProps> = ({
               {application.status === 'approved' ? (
                 <>
                   <Check className="mr-1 h-4 w-4" />
-                  Approuvé
+                  Acceptée
                 </>
               ) : application.status === 'pending' ? (
                 <>
@@ -79,7 +79,7 @@ const ApplicationDetailsDialog: React.FC<ApplicationDetailsDialogProps> = ({
               ) : (
                 <>
                   <X className="mr-1 h-4 w-4" />
-                  Rejeté
+                  Refusée
                 </>
               )}
             </Badge>
@@ -161,7 +161,7 @@ const ApplicationDetailsDialog: React.FC<ApplicationDetailsDialogProps> = ({
               disabled={application.status === 'rejected'}
             >
               <X className="h-4 w-4 mr-2" />
-              Rejeter
+              Refuser
             </Button>
             <Button 
               variant="outline"

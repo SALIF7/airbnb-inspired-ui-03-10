@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
 
 interface ApplicationDialogProps {
   isOpen: boolean;
@@ -43,6 +42,7 @@ const ApplicationDialog = ({
   setApplicantData,
   isHousingOffer
 }: ApplicationDialogProps) => {
+  // Handle form submission with loading state
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,13 +52,8 @@ const ApplicationDialog = ({
     try {
       await onSubmit(e);
       onOpenChange(false);
-      toast.success(isHousingOffer 
-        ? "Votre demande de réservation a été enregistrée avec succès" 
-        : "Votre candidature a été envoyée avec succès");
-      console.log("Application submitted successfully:", applicantData);
     } catch (error) {
       console.error("Application submission error:", error);
-      toast.error("Une erreur est survenue lors de l'envoi. Veuillez réessayer.");
     } finally {
       setIsSubmitting(false);
     }
@@ -81,7 +76,7 @@ const ApplicationDialog = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium mb-1">
-              Nom <span className="text-red-500">*</span>
+              Nom complet <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />

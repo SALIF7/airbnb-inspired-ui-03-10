@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useSocialInteractions } from '@/hooks/useSocialInteractions';
-import { useAuth } from '@/hooks/useAuth';
+import useAuth from '@/hooks/useAuth';
 import { CommentsSection } from './CommentsSection';
 import { ShareDialog } from './ShareDialog';
 

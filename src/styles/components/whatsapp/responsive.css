@@ -1,75 +1,143 @@
 
-/* Mobile specific styles */
-@media (max-width: 640px) {
-  .whatsapp-container {
-    height: calc(100vh - 115px);
-    border-radius: 0;
-  }
-  
-  .whatsapp-message-area {
-    background-attachment: fixed;
+/* Responsive styles for mobile */
+@media (max-width: 768px) {
+  .whatsapp-back-button {
+    display: flex !important;
   }
   
   .whatsapp-message {
-    max-width: 85%;
+    max-width: 80%;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
   }
   
+  .message-image {
+    max-width: 200px;
+  }
+  
+  .whatsapp-conversation-item {
+    padding: 10px 12px;
+  }
+  
+  .whatsapp-tabs {
+    font-size: 0.7rem;
+  }
+  
+  .whatsapp-tab {
+    padding: 8px 4px;
+  }
+
+  /* Amélioration de la zone de saisie sur mobile */
+  .whatsapp-input-area {
+    padding: 8px 10px;
+    min-height: 60px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
   .whatsapp-input {
     font-size: 14px;
+    padding: 8px 10px;
+    max-height: 100px;
+    overflow-y: auto;
+  }
+
+  /* Assurer que les boutons sont assez grands pour être cliquables sur mobile */
+  .whatsapp-send-button, 
+  [variant="ghost"][size="icon"],
+  .whatsapp-header button {
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: scale(1.05);
+    touch-action: manipulation;
+  }
+
+  /* Meilleur espacement des éléments de l'interface */
+  .media-preview-container {
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+
+  /* S'assurer que le message-area occupe tout l'espace disponible */
+  .whatsapp-message-area {
+    height: calc(100% - 120px);
+    overflow-y: auto;
+    padding-bottom: 16px;
+  }
+
+  /* Correction pour la hauteur du conteneur de conversation sur mobile */
+  .message-list-container {
+    height: calc(100vh - 240px);
+  }
+}
+
+/* Tablet-specific styles */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .whatsapp-message {
+    max-width: 70%;
   }
   
+  .whatsapp-tabs {
+    font-size: 0.8rem;
+  }
+}
+
+/* Ensure mobile styles work on very small screens */
+@media (max-width: 480px) {
+  .whatsapp-user-info {
+    max-width: 160px;
+  }
+
   .whatsapp-header {
-    padding: 8px 12px;
+    padding: 8px 10px;
   }
-  
-  .whatsapp-user-name {
-    font-size: 15px;
-  }
-  
-  .whatsapp-user-status {
-    font-size: 12px;
-  }
-}
 
-/* Show/hide conversation list and view on mobile */
-@media (max-width: 768px) {
-  .conversation-list-container {
-    display: block;
-    width: 100%;
+  .whatsapp-conversation-item {
+    padding: 8px 10px;
   }
-  
-  .conversation-view-container {
-    display: none;
-    width: 100%;
-  }
-  
-  .conversation-list-container.hidden {
-    display: none;
-  }
-  
-  .conversation-view-container.active {
-    display: block;
-  }
-  
-  .back-button {
-    display: block;
-  }
-}
 
-/* Tablet specific styles */
-@media (min-width: 641px) and (max-width: 1024px) {
+  /* Make input buttons better spaced */
+  .whatsapp-input-area > button {
+    margin: 0 2px;
+  }
+
+  /* Fix display issues on small screens */
+  .whatsapp-conversation-preview {
+    max-width: 160px;
+  }
+  
+  /* Guarantee that input area is always visible */
+  .whatsapp-input-area {
+    position: sticky;
+    bottom: 0;
+    background: white;
+    z-index: 50;
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  /* Fix for scrolling issues on small screens */
   .whatsapp-container {
-    height: calc(100vh - 135px);
+    height: calc(100vh - 120px);
+    display: flex;
+    flex-direction: column;
   }
 }
 
-/* Desktop specific styles */
-@media (min-width: 1025px) {
+/* Fix for landscape mode */
+@media (max-width: 896px) and (orientation: landscape) {
   .whatsapp-container {
-    height: calc(100vh - 175px);
+    height: calc(100vh - 80px);
   }
   
-  .back-button {
-    display: none;
+  .message-list-container {
+    height: calc(100vh - 180px);
+  }
+  
+  .whatsapp-input-area {
+    min-height: 50px;
   }
 }

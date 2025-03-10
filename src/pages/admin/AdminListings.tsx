@@ -9,9 +9,8 @@ import { Listing } from '@/types/listing';
 import { useListings } from '@/hooks/useListings';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, SlidersHorizontal, PlusCircle, Trash2 } from "lucide-react";
+import { Search, SlidersHorizontal, PlusCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { toast } from "sonner";
 
 const AdminListings = () => {
   const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
@@ -27,8 +26,7 @@ const AdminListings = () => {
     error,
     addListing,
     updateListing,
-    deleteListing,
-    clearAllListingImages
+    deleteListing
   } = useListings();
 
   const handleEditListing = (listing: Listing) => {
@@ -60,17 +58,6 @@ const AdminListings = () => {
     }
   };
 
-  const handleClearAllImages = async () => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer toutes les images de tous les logements? Cette action est irréversible.")) {
-      try {
-        await clearAllListingImages.mutateAsync();
-      } catch (error) {
-        console.error('Error clearing images:', error);
-        toast.error("Erreur lors de la suppression des images");
-      }
-    }
-  };
-
   const filteredListings = listings?.filter(listing => {
     const matchesSearch = listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          listing.location.toLowerCase().includes(searchTerm.toLowerCase());
@@ -88,28 +75,17 @@ const AdminListings = () => {
             <div className="container-wide">
               <div className="flex justify-between items-center mb-6">
                 <h1 className="text-2xl font-semibold">Gestion des logements</h1>
-                <div className="flex gap-3">
-                  <Button 
-                    onClick={handleClearAllImages}
-                    variant="destructive"
-                    size="sm"
-                    className="flex items-center gap-2"
-                  >
-                    <Trash2 size={16} />
-                    Supprimer toutes les images
-                  </Button>
-                  <Button 
-                    onClick={() => {
-                      setIsDialogOpen(true);
-                      setIsEditing(false);
-                      setSelectedListing(null);
-                    }}
-                    className="bg-sholom-primary hover:bg-sholom-primary/90 text-white font-medium flex items-center gap-2"
-                  >
-                    <PlusCircle size={18} />
-                    Ajouter un logement
-                  </Button>
-                </div>
+                <Button 
+                  onClick={() => {
+                    setIsDialogOpen(true);
+                    setIsEditing(false);
+                    setSelectedListing(null);
+                  }}
+                  className="bg-sholom-primary hover:bg-sholom-primary/90 text-white font-medium flex items-center gap-2"
+                >
+                  <PlusCircle size={18} />
+                  Ajouter un logement
+                </Button>
               </div>
 
               <Card className="mb-6 overflow-hidden">

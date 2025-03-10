@@ -1,14 +1,16 @@
 
 import React from 'react';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogFooter 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Check, X } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Send, Eye } from 'lucide-react';
 
 interface MessagePreviewProps {
   isOpen: boolean;
@@ -29,26 +31,35 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Aperçu du message</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <Eye className="h-5 w-5" />
+            Prévisualisation du message
+          </DialogTitle>
+          <DialogDescription>
+            Vérifiez votre message avant de l'envoyer à {recipient}
+          </DialogDescription>
         </DialogHeader>
         
         <div className="py-4">
-          <div className="text-sm text-gray-500 mb-2">
-            À: <span className="font-medium text-gray-700">{recipient}</span>
+          <div className="flex items-center gap-2 mb-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage src="/placeholder.svg" alt="Admin" />
+              <AvatarFallback>A</AvatarFallback>
+            </Avatar>
+            <div className="font-medium">Administrateur</div>
           </div>
           
-          <div className="bg-blue-50 p-4 rounded-lg border border-blue-100">
-            <p className="whitespace-pre-wrap break-words text-gray-800">{message}</p>
+          <div className="bg-green-100 rounded-lg p-3 mt-2">
+            <p className="whitespace-pre-wrap">{message}</p>
           </div>
         </div>
         
-        <DialogFooter className="sm:justify-between">
+        <DialogFooter className="flex justify-end">
           <Button variant="outline" onClick={onClose}>
-            <X className="h-4 w-4 mr-2" />
-            Annuler
+            Modifier
           </Button>
-          <Button onClick={onSend}>
-            <Check className="h-4 w-4 mr-2" />
+          <Button onClick={onSend} className="ml-2">
+            <Send className="h-4 w-4 mr-2" />
             Envoyer
           </Button>
         </DialogFooter>

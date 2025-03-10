@@ -1,15 +1,17 @@
 
-import React, { useRef, useEffect } from 'react';
-import { Conversation } from '@/components/messages/types';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Smile, Paperclip, Mic, Send } from 'lucide-react';
-import { QuickResponseSelector } from './QuickResponseSelector';
+import { Textarea } from '@/components/ui/textarea';
+import { Send, Loader2, Eye, Paperclip, Smile, Mic } from 'lucide-react';
+import { QuickResponses } from './QuickResponses';
+import { MessagePreview } from './MessagePreview';
+import { Conversation } from '@/components/messages/types';
 
 interface AdminMessageInputProps {
   newMessage: string;
   setNewMessage: (message: string) => void;
   handleSendMessage: () => void;
-  conversation: Conversation;
+  conversation: Conversation | null;
   isSending: boolean;
   quickResponses: string[];
   onQuickResponseSelect: (text: string) => void;
@@ -37,144 +39,135 @@ const AdminMessageInput: React.FC<AdminMessageInputProps> = ({
   cancelPreview
 }) => {
   const inputRef = useRef<HTMLDivElement>(null);
+  const [selectionPosition, setSelectionPosition] = useState<number | null>(null);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (newMessage.trim()) {
-        handleSendMessage();
-      }
-    }
+  // Cette fonction gère l'envoi du message
+  const sendMessage = () => {
+    if (!newMessage.trim() || isSending) return;
+    handleSendMessage();
   };
 
-  // Fix cursor position and focus input on mount and when newMessage changes
+  // Effet pour maintenir le contenu et le curseur à la bonne position
   useEffect(() => {
     if (inputRef.current) {
-      // Focus the input
-      inputRef.current.focus();
-      
-      // Clear existing content and set it properly to fix cursor position
-      const content = newMessage;
-      inputRef.current.innerHTML = '';
-      
-      // Create and append text node
-      if (content) {
-        const textNode = document.createTextNode(content);
-        inputRef.current.appendChild(textNode);
-      }
-      
-      // Place cursor at the end
-      const range = document.createRange();
-      const sel = window.getSelection();
-      if (inputRef.current.childNodes.length > 0) {
-        const lastChild = inputRef.current.childNodes[inputRef.current.childNodes.length - 1];
-        range.setStartAfter(lastChild);
-      } else {
-        range.setStart(inputRef.current, 0);
-      }
-      range.collapse(true);
-      
-      if (sel) {
-        sel.removeAllRanges();
-        sel.addRange(range);
+      // S'assurer que le contenu reflète toujours newMessage
+      if (inputRef.current.textContent !== newMessage) {
+        const selection = window.getSelection();
+        const range = selection?.getRangeAt(0);
+        
+        // Sauvegarder la position du curseur avant de modifier le contenu
+        const previousPosition = range?.startOffset || 0;
+        
+        // Mettre à jour le contenu
+        inputRef.current.textContent = newMessage;
+        
+        // Restaurer la position du curseur seulement si on vient de taper du texte
+        if (selectionPosition !== null) {
+          const newRange = document.createRange();
+          newRange.setStart(inputRef.current.firstChild || inputRef.current, 
+                           Math.min(selectionPosition, newMessage.length));
+          newRange.collapse(true);
+          
+          selection?.removeAllRanges();
+          selection?.addRange(newRange);
+          
+          // Réinitialiser pour éviter de repositionner lors d'autres rendus
+          setSelectionPosition(null);
+        }
       }
     }
-  }, [newMessage]);
+  }, [newMessage, selectionPosition]);
 
+  // Fonction pour gérer les changements de texte manuellement
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    // Update message content
-    setNewMessage(e.currentTarget.textContent || '');
+    const text = e.currentTarget.textContent || '';
+    
+    // Enregistrer la position actuelle du curseur
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const position = selection.getRangeAt(0).startOffset;
+      setSelectionPosition(position);
+    }
+    
+    setNewMessage(text);
   };
 
   return (
-    <div className="p-3 bg-gray-100 border-t">
-      {quickResponses.length > 0 && (
-        <QuickResponseSelector 
+    <>
+      <div className="whatsapp-input-area">
+        <QuickResponses
           responses={quickResponses}
-          onSelect={onQuickResponseSelect}
-          onAdd={onAddQuickResponse}
-          onRemove={onRemoveQuickResponse}
+          onSelectResponse={onQuickResponseSelect}
+          onAddResponse={onAddQuickResponse}
+          onRemoveResponse={onRemoveQuickResponse}
         />
-      )}
-      
-      <div className="flex items-center">
+        
         <Button 
           variant="ghost" 
           size="icon" 
-          className="text-gray-500"
+          className="text-gray-500 hover:bg-gray-200 rounded-full"
         >
-          <Smile className="h-6 w-6" />
+          <Smile className="h-5 w-5" />
         </Button>
         
         <Button 
           variant="ghost" 
           size="icon" 
-          className="text-gray-500 mr-1"
+          className="text-gray-500 hover:bg-gray-200 rounded-full"
         >
-          <Paperclip className="h-6 w-6" />
+          <Paperclip className="h-5 w-5" />
         </Button>
         
         <div 
           ref={inputRef}
-          className="flex-1 min-h-[40px] bg-white rounded-md px-3 py-2 focus:outline-none"
-          contentEditable
+          contentEditable 
+          className="whatsapp-input" 
+          dir="ltr" // Force left-to-right text direction
           onInput={handleInput}
-          onKeyDown={handleKeyDown}
-          data-placeholder="Écrivez un message..."
-          suppressContentEditableWarning={true}
-          style={{
-            padding: '10px 12px', 
-            borderRadius: '20px'
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              if (!isPreviewMode) {
+                previewMessage();
+              }
+            }
           }}
+          suppressContentEditableWarning={true}
         ></div>
         
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="text-gray-500 ml-1"
-          disabled={Boolean(newMessage.trim())}
+        <Button
+          variant="outline"
+          onClick={previewMessage}
+          disabled={isSending || !newMessage.trim()}
+          className="rounded-full mr-1"
+          size="icon"
         >
-          <Mic className="h-6 w-6" />
+          <Eye className="h-4 w-4" />
         </Button>
         
         <Button 
-          variant="ghost" 
-          size="icon" 
-          className={`ml-1 ${newMessage.trim() ? 'text-blue-500' : 'text-gray-500'}`}
-          onClick={handleSendMessage}
-          disabled={!newMessage.trim() || isSending}
+          onClick={sendMessage} 
+          disabled={isSending || !newMessage.trim()}
+          className="whatsapp-send-button"
+          size="icon"
         >
-          <Send className="h-6 w-6" />
+          {isSending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            newMessage.trim() ? <Send className="h-5 w-5" /> : <Mic className="h-5 w-5" />
+          )}
         </Button>
       </div>
-
-      {isPreviewMode && (
-        <div className="mt-3 p-3 bg-white rounded-md border">
-          <div className="bg-gray-50 p-3 rounded mb-2">
-            <h4 className="font-medium mb-1">Aperçu du message</h4>
-            <p>{newMessage}</p>
-          </div>
-          
-          <div className="flex justify-end gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={cancelPreview}
-            >
-              Annuler
-            </Button>
-            
-            <Button 
-              size="sm"
-              onClick={sendFromPreview}
-              disabled={isSending}
-            >
-              Envoyer
-            </Button>
-          </div>
-        </div>
-      )}
-    </div>
+      
+      {/* Modal de prévisualisation du message */}
+      <MessagePreview
+        isOpen={isPreviewMode}
+        onClose={cancelPreview}
+        onSend={sendFromPreview}
+        message={newMessage}
+        recipient={conversation?.with.name || 'Utilisateur'}
+      />
+    </>
   );
 };
 

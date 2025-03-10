@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface ContractFieldsProps {
   contract: string;
@@ -17,13 +17,16 @@ export const ContractFields: React.FC<ContractFieldsProps> = ({
       <Label htmlFor="contract" className="block text-sm font-medium mb-1">
         Type de contrat <span className="text-red-500">*</span>
       </Label>
-      <Input
-        id="contract"
-        value={contract}
-        onChange={(e) => setContract(e.target.value)}
-        placeholder="Entrez le type de contrat"
-        required
-      />
+      <Select value={contract} onValueChange={setContract}>
+        <SelectTrigger>
+          <SelectValue placeholder="Sélectionner un type de contrat" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="full_time">CDI</SelectItem>
+          <SelectItem value="part_time">Temps partiel</SelectItem>
+          <SelectItem value="contract">CDD</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 };
